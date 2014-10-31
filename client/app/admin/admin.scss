@@ -25,3 +25,26 @@
 		background-color:#7d7;
 	}
 }
+
+.table-centered {
+	margin: 0 auto;
+	float:none;
+	text-align:center;
+	font-size: 1.4em;
+
+	#header {
+		font-size:1.8em;
+	}
+
+	.inlabel {
+		text-align:right;
+	}
+
+	.intext {
+		text-align:left;
+	}
+
+	.row {
+		margin: 5px 0;
+	}
+}

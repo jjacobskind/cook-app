@@ -2,6 +2,12 @@
 
 <div class="container-fluid">
   <p ng-show="isAdmin()">The delete user and user index api routes are restricted to users with the 'admin' role.</p>
-  <div class=' col col-md-2' ui-view='admin_sidebar' id='admin-sidebar'></div>
-  <div class=' col col-md-10' ui-view='admin_main'></div>
+  <div class=' col col-md-2' id='admin-sidebar'>
+  	<ul class="nav nav-pills nav-stacked col-md-12 col-lg-12 col-sm-12" id="side_buttons">
+  		<li ng-repeat="button in sideButtons">
+  			<a ui-sref='.{{button.state}}'>{{button.title}}</a>
+  		</li>
+  	</ul>
+  </div>
+  <div class=' col col-md-10' ui-view><h1>Administrative Section </h1></div>
 </div>

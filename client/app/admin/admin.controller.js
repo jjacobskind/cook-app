@@ -18,9 +18,7 @@ angular.module('generatorApp')
   })
   .controller('AdminCtrl', function ($scope, $http, Auth, User, sideButtonFactory, $state) {
     // Use the User $resource to fetch all users
-    if($state.current.name==='admin.users') {
-      $scope.users = User.query();
-    }
+
     $scope.sideButtons = sideButtonFactory.buttons;
 
     $scope.delete = function(user) {

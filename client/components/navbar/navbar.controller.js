@@ -5,12 +5,6 @@ angular.module('generatorApp')
     $scope.menu = [{
       'title': 'Home',
       'state': 'main'
-    },
-    {'title': 'Test1',
-      'state': '.test1'
-    },
-    {'title': 'Test2',
-      'state': '.test2'
     }];
 
     $scope.isCollapsed = true;
