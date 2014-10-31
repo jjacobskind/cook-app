@@ -16,10 +16,11 @@ angular.module('generatorApp')
       buttons: buttons
     };
   })
-  .controller('AdminCtrl', function ($scope, $http, Auth, User, sideButtonFactory) {
-
+  .controller('AdminCtrl', function ($scope, $http, Auth, User, sideButtonFactory, $state) {
     // Use the User $resource to fetch all users
-    $scope.users = User.query();
+    if($state.current.name==='admin.users') {
+      $scope.users = User.query();
+    }
     $scope.sideButtons = sideButtonFactory.buttons;
 
     $scope.delete = function(user) {
