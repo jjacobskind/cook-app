@@ -1,0 +1,7 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<div class="container-fluid">
+  <p ng-show="isAdmin()">The delete user and user index api routes are restricted to users with the 'admin' role.</p>
+  <div class=' col col-md-2' ui-view='admin_sidebar' id='admin-sidebar'></div>
+  <div class=' col col-md-10' ui-view='admin_main'></div>
+</div>
