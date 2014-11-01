@@ -5,11 +5,6 @@ angular.module('generatorApp')
     $scope.search_text;
     $scope.awesomeThings = [];
 
-
-    $http.get('/api/things').success(function(awesomeThings) {
-      $scope.awesomeThings = awesomeThings;
-    });
-
     $scope.addThing = function() {
       if($scope.newThing === '') {
         return;
@@ -23,7 +18,7 @@ angular.module('generatorApp')
     };
 
     $scope.getRecipes = function() {
-      $http.post('/api/things/get_recipes', {search: $scope.search_text})
+      $http.post('/api/sources/get_recipes', {search: $scope.search_text})
         .success(function(recipe_list) {
           $scope.awesomeThings = recipe_list;
         });

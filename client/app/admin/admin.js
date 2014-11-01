@@ -14,6 +14,13 @@ angular.module('generatorApp')
     	templateUrl: 'app/admin/templates/admin-scrape.html',
     	controller: function($scope, $http, Source) {
     		$scope.sources = Source.query();
+            $scope.source = {
+                name:"",
+                url:"",
+                selector:"",
+                recipe_page:""
+            };
+            $scope.preview = "";
     		$scope.test = function() {
     			var obj = {
     				recipe_page: $scope.source.recipe_page,
@@ -21,7 +28,7 @@ angular.module('generatorApp')
     			};
     			$http.post('/api/sources/test', obj)
     				.success(function(res) {
-    					console.log(res);
+    					$scope.preview=res;
     				});
     		};
     		$scope.save = function() {
@@ -32,12 +39,8 @@ angular.module('generatorApp')
     				selector: $scope.source.selector
     			};
     			Source.save({}, obj, function(res) {
-    				var new_item = res;
-    				$scope.sources.push(new_item);
-    				$scope.source.name="";
-    				$scope.source.url="";
-	    			$scope.source.recipe_page="";
-    				$scope.source.selector="";
+    				$scope.sources=res.array;
+    				$scope.reset();
     			});
     		};
     		$scope.delete = function(id, source) {
@@ -45,7 +48,27 @@ angular.module('generatorApp')
     				var i = $scope.sources.indexOf(source);
     				$scope.sources.splice(i,1);
     			});
-    		}
+    		};
+            $scope.reset = function() {
+                $scope.source.name="";
+                $scope.source.url="";
+                $scope.source.recipe_page="";
+                $scope.source.selector="";
+                $scope.preview="";
+            };
+            $scope.fillForm = function(source) {
+                $scope.source.name=source.name;
+                $scope.source.url=source.url;
+                $scope.source.selector=source.selector;
+                $scope.source.recipe_page=source.recipe_page;
+                $scope.test();
+            };
+            $scope.makeSeed = function() {
+                $http.get('/api/sources/seed')
+                    .success(function(res) {
+                        console.log(res);
+                    });
+            };
     	}
 	   })
 

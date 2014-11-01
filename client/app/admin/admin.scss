@@ -47,4 +47,24 @@
 	.row {
 		margin: 5px 0;
 	}
+
+	textarea {
+		width:80%;
+		height: 120px;
+		resize:none;
+		font-size:0.8em;
+	}
+
+	h3 {
+		margin-top:0;
+	}
+
+	.pending {
+		background-color: #f86;
+	}
+
+	#footer {
+		padding-top:15px;
+	}
+
 }

@@ -68,21 +68,7 @@ exports.destroy = function(req, res) {
   });
 };
 
-exports.getRecipes = function(req, res) {
-  var url = 'http://food2fork.com/api/search?' + querystring.stringify({
-    key:f2fkey,
-    q: req.body.search
-  });
 
-  // Searches Fork2Food's API
-  request(url, function(err, response, body) {
-    var data = JSON.parse(body);
-    var titles = data.recipes.map(function(item){
-        return {'name': item.title, 'url': item.source_url};
-    });
-    res.send(titles);
-  });
-};
 
 // Scrapes recipe from source, auto-tags it by F2F ID, and saves entry in DB
 exports.tagRecipe = function(req, res) {

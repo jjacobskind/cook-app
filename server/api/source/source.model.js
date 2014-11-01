@@ -6,8 +6,9 @@ var mongoose = require('mongoose'),
 var SourceSchema = new Schema({
   name: {type: String, required:true},
   url: {type: String, required:true},
-  selector: {type: String, required:true},
-  recipe_page: String
+  selector: String,
+  recipe_page: String,
+  pending: {type: Boolean, required:true}
 });
 
 module.exports = mongoose.model('Source', SourceSchema);

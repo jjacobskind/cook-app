@@ -1,58 +1,71 @@
-<div class='table-centered col-md-6 col-lg-6'>
+<div class='table-centered col-md-12 col-lg-12'>
 	<h1>Scraping Selector Management</h1>
 	<br><br>
 	<div class="row">
 		<form>
-			<div class="row">
-				<div class="inlabel col-md-6 col-lg-6">
-					<label>Source Name: </label>
+			<div class='col-md-6 col-lg-6'>
+				<div class="row">
+					<div class="inlabel col-md-6 col-lg-6">
+						<label>Source Name: </label>
+					</div>
+					<div class="intext col-md-6 col-lg-6">
+						<input type="text" ng-model="source.name" />
+					</div>
 				</div>
-				<div class="intext col-md-6 col-lg-6">
-					<input type="text" ng-model="source.name" />
+				<div class="row">
+					<div class="inlabel col-md-6 col-lg-6">
+						<label>Source URL: </label>
+					</div>
+					<div class="intext col-md-6 col-lg-6">
+						<input type="text" ng-model="source.url" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="inlabel col-md-6 col-lg-6">
+						<label>Selector: </label>
+					</div>
+					<div class="intext col-md-6 col-lg-6">
+						<input type="text" ng-model="source.selector" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="inlabel col-md-6 col-lg-6">
+						<label>Test Recipe URL: </label>
+					</div>
+					<div class="intext col-md-6 col-lg-6">
+						<input type="text" ng-model="source.recipe_page" />
+					</div>
+				</div>
+				<div class="row">
+					<button type="button" class="btn btn-default" ng-click="test()">Test Selector</button>
+					<button type="button" class="btn btn-default" ng-click="reset()">Reset Form</button>
 				</div>
 			</div>
-			<div class="row">
-				<div class="inlabel col-md-6 col-lg-6">
-					<label>Source URL: </label>
-				</div>
-				<div class="intext col-md-6 col-lg-6">
-					<input type="text" ng-model="source.url" />
-				</div>
-			</div>
-			<div class="row">
-				<div class="inlabel col-md-6 col-lg-6">
-					<label>Selector: </label>
-				</div>
-				<div class="intext col-md-6 col-lg-6">
-					<input type="text" ng-model="source.selector" />
-				</div>
-			</div>
-			<div class="row">
-				<div class="inlabel col-md-6 col-lg-6">
-					<label>Test Recipe URL: </label>
-				</div>
-				<div class="intext col-md-6 col-lg-6">
-					<input type="text" ng-model="source.recipe_page" />
-				</div>
-			</div>
-			<div class="row">
-				<button type="button" class="btn btn-default" ng-click="test()">Test Selector</button>
+			<div class='col-md-6 col-lg-6'>
+				<h3>Scrape Results</h3>
+				<textarea disabled>{{preview}}</textarea>
 				<button type="button" class="btn btn-primary" ng-click="save()">Add Selector</button>
 			</div>
 		</form>
 	</div>
 	<div class="row" id="header">
-		<div class="col-md-5 col-lg-5">Source Name</div>
-		<div class="col-md-5 col-lg-5">Selector</div>
-		<div class="col-md-2 col-lg-2"></div>
+		<div class="col-md-4 col-lg-4">Source Name</div>
+		<div class="col-md-4 col-lg-4">Selector</div>
+		<div class="col-md-4 col-lg-4"></div>
 	</div>
-	<div class="row" ng-repeat="source in sources | orderBy:'name'">
-		<div class="cell col-md-5 col-lg-5"><a href='{{source.url}}' target='_blank'>{{source.name}}</a></div>
-		<div class="cell col-md-5 col-lg-5">
+	<div class="row" ng-repeat="source in sources | orderBy:['-pending', 'name']" ng-class="{'pending':source.pending}">
+		<div class="cell col-md-4 col-lg-4"><a href='{{source.recipe_page}}' target='_blank'>{{source.name}}</a></div>
+		<div class="cell col-md-4 col-lg-4">
 			<a ng-click=''>{{source.selector}}</a>
 		</div>
 		<div class="cell col-md-2 col-lg-2">
-			<a href="#" ng-click='delete(source._id, source)'>[Remove]</a>
+			<a href="#" class = 'btn btn-success' ng-click='fillForm(source)'>Test</a>
 		</div>
+		<div class="cell col-md-2 col-lg-2">
+			<a href="#" class='btn btn-danger' ng-click='delete(source._id, source)'>Remove</a>
+		</div>
+	</div>
+	<div class="row" id="footer">
+		<button type="button" class="btn btn-primary" ng-click="makeSeed()">Backup Sources In Seed File</button>
 	</div>
 </div>
