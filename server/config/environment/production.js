@@ -22,5 +22,11 @@ module.exports = {
   },
 
   //Fork2Food API Key
-  f2fkey: process.env.F2FAPIKEY
+  f2fkey: process.env.F2FAPIKEY,
+
+  // Merriam-Webster Dictionary API Key
+  mwdictkey: process.env.MWDICTAPIKEY,
+
+  // Merriam-Webster Thesauraus API Key
+  mwtheskey: process.env.MWTHESAPIKEY
 };

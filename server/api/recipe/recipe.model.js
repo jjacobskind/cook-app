@@ -9,4 +9,12 @@ var RecipeSchema = new Schema({
   active: Boolean
 });
 
-module.exports = mongoose.model('Recipe', RecipeSchema);
+var WordSchema = new Schema({
+	word: {type: String, required: true},
+	base: {type: String, required: true}
+});
+
+module.exports = {
+	recipe: mongoose.model('Recipe', RecipeSchema),
+	word: mongoose.model('Word', WordSchema)
+};

@@ -68,19 +68,6 @@ exports.destroy = function(req, res) {
   });
 };
 
-
-
-// Scrapes recipe from source, auto-tags it by F2F ID, and saves entry in DB
-exports.tagRecipe = function(req, res) {
-  var url = req.body.url;
-  request(url, function(err, response, body) {
-    if(!err && response.statusCode==200){
-      var $ = cheerio.load(body);
-      console.log($("ol.instructions").text());
-    }
-  });
-};
-
 function handleError(res, err) {
   return res.send(500, err);
 }

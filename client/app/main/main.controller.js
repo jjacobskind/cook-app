@@ -25,7 +25,9 @@ angular.module('generatorApp')
     };
 
     $scope.tagRecipe = function(url) {
-      console.log(url);
-      $http.post('/api/things/tag_recipe', {url: url});
+      $http.post('/api/recipes/tag_recipe', {url: url})
+        .success(function(res){
+          console.log(res);
+        });
     };
   });
