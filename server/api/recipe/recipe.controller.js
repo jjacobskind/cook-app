@@ -1,9 +1,9 @@
 'use strict';
 
 var _ = require('lodash');
-var Recipe = require('./recipe.model').recipe;
-var Word = require('./recipe.model').word;
-var Source = require('../source/source.model');
+var Recipe = require('../source/source.model').recipe;
+var Word = require('../source/source.model').word;
+var Source = require('../source/source.model').source;
 var request = require('request');
 var cheerio = require('cheerio');
 var mwdictkey = require('../../config/environment/production').mwdictkey;
@@ -59,6 +59,7 @@ exports.destroy = function(req, res) {
   });
 };
 
+/*
 // Scrapes recipe from source, auto-tags it by F2F ID, and saves entry in DB
 exports.tagRecipe = function(req, res) {
   var url = req.body.url;
@@ -81,13 +82,19 @@ exports.tagRecipe = function(req, res) {
       }
       console.log("Number of unique words: " + unique_words.length);
       var lookup_count=0;
+
+
+
+
+
+
       var recursiveWordLoop = function(index) {
-        console.log(index);
         if(index>=len) {
           console.log("END");
           console.log("Looked up " + String(Math.round(100*lookup_count/index)) + "% of words");
           res.send("Finished!");
         } else if(!!unique_words[index]) {
+          console.log(index+1);
           var search_word = unique_words[index];
           Word.findOne({word: search_word}, function(mongo_err, mongo_obj){
             if(mongo_err) {
@@ -120,6 +127,7 @@ exports.tagRecipe = function(req, res) {
             }
           });
         } else {
+          console.log(index+1);
           recursiveWordLoop(index+1);
         }
       };
@@ -142,6 +150,8 @@ function fixUrl(url) {
   // console.log(fixed_url);
   return fixed_url;
 };
+
+*/
 
 function handleError(res, err) {
   return res.send(500, err);
