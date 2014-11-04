@@ -1,5 +1,5 @@
 'use strict';
-
+var Snowball = require('snowball');
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
@@ -12,8 +12,18 @@ var SourceSchema = new Schema({
 });
 
 var TagSchema = new Schema({
-	base_word: {type: String, required: true},
-	display_word: {type: String, required: true},
+	base_word: { type: String, required: true },
+	display_word: {
+					type: String, 
+					required: true,
+					set: function(word) {
+						var stemmer = new Snowball('English');
+						stemmer.setCurrent(word);
+						stemmer.stem();
+						this.base_word = stemmer.getCurrent();
+						return word;
+					}
+				},
 	recipes: [RecipeSchema],
 	category: String
 });

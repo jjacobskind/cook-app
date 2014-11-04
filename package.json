@@ -26,7 +26,8 @@
     "connect-mongo": "^0.4.1",
     "cheerio": "^0.17.0",
     "request": "^2.47.0",
-    "socket.io": "^1.2.0"
+    "socket.io": "^1.2.0",
+    "snowball": "^0.3.1"
   },
   "devDependencies": {
     "grunt": "~0.4.4",

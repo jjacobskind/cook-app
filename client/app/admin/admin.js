@@ -10,8 +10,8 @@ angular.module('generatorApp')
       })
 
       .state('admin.scrape', {
-		url: '/scrape',
-    	templateUrl: 'app/admin/templates/admin-scrape/admin-scrape.html',
+    		url: '/scrape',
+      	templateUrl: 'app/admin/templates/admin-scrape/admin-scrape.html',
         controller: 'AdminScrapeCtrl'
       })
 
@@ -21,5 +21,11 @@ angular.module('generatorApp')
     	controller: function($scope, User) {
     		$scope.users = User.query();
     	}
+      })
+
+      .state('admin.tags', {
+        url: '/tags',
+        templateUrl: 'app/admin/templates/admin-tags/admin-tags.html',
+        controller: 'AdminTagsCtrl'
       });
   });

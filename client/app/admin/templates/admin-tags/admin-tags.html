@@ -1,0 +1,48 @@
+<div class='table-centered col-md-12 col-lg-12'>
+	<h1>Recipe Tags</h1>
+	<br><br>
+	<div class="row">
+		<form>
+			<div class="row">
+				<div class="inlabel col-md-6 col-lg-6">
+					<label>Display Word: </label>
+				</div>
+				<div class="intext col-md-6 col-lg-6">
+					<input type="text" ng-model="tag.display_word" />
+				</div>
+			</div>
+			<div class="row">
+				<div class="inlabel col-md-6 col-lg-6">
+					<label>Category: </label>
+				</div>
+				<div class="intext col-md-6 col-lg-6">
+					<input type="text" ng-model="tag.category" />
+				</div>
+			</div>
+			<div class="row btn-group">
+				<button type="button" class="btn btn-primary" ng-click="add()">Add Tag</button>
+				<button type="button" class="btn btn-default" ng-click="reset()">Reset Form</button>
+			</div>
+		</form>
+	</div>
+	<div class="row" id="header">
+		<div class="col-md-3 col-lg-3">Display Word</div>
+		<div class="col-md-3 col-lg-3">Stemmed Word</div>
+		<div class="col-md-3 col-lg-3">Category</div>
+		<div class="col-md-3 col-lg-3"></div>
+	</div>
+	<div class="row" ng-repeat="tag in tags | orderBy:'display_word'">
+		<div class="cell col-md-3 col-lg-3">
+			<p>{{tag.display_word}}</p>
+		</div>
+		<div class="cell col-md-3 col-lg-3">
+			<p>{{tag.base_word}}</p>
+		</div>
+		<div class="cell col-md-3 col-lg-3">
+			<p>{{tag.category}}</p>
+		</div>
+		<div class="cell col-md-1 col-lg-1">
+			<a href="#" class='btn btn-danger' ng-click='delete(tag._id, tag)'>Remove</a>
+		</div>
+	</div>
+</div>

@@ -4,11 +4,15 @@ angular.module('generatorApp')
   .factory('sideButtonFactory', function() {
     var buttons = [
       {
+        'title':'Recipe Tags',
+        'state': 'tags'
+      },
+      {
         'title':'Scraping Selectors',
         'state': 'scrape'
       },
       {
-        'title':'Manage Users',
+        'title':'Users',
         'state': 'users'
       }
     ];

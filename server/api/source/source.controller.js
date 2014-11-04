@@ -11,10 +11,15 @@ var f2fkey = require('../../config/environment/production').f2fkey;
 var querystring = require('querystring');
 var fs = require('fs');
 var mwdictkey = require('../../config/environment/production').mwdictkey;
+var Snowball = require('snowball');
 // var socket = require('socket.io')(323);
 
 // Get list of sources
 exports.index = function(req, res) {
+  res.send("Empty!");
+};
+
+exports.getSelectors = function(req, res) {
   Source.find(function (err, sources) {
     if(err) { return handleError(res, err); }
     return res.json(200, sources);
@@ -53,7 +58,7 @@ exports.update = function(req, res) {
 };
 
 // Updates a source if it exists and creates it if it doesn't exist
-exports.updateOrCreate = function(req, res) {
+exports.updateOrCreateSelector = function(req, res) {
   var obj = req.body;
   if(!!obj.selector) {
     obj.pending=false;
@@ -68,7 +73,6 @@ exports.updateOrCreate = function(req, res) {
         if(err) {
           console.log("***ERROR IN SOURCE.UPDATEORCREATE*** #2")
         } else {
-          console.log(sourceArr);
           res.json(200, {'array':sourceArr});
         }
       });
@@ -171,56 +175,15 @@ function tagRecipe(url) {
         console.log("Number of unique words: " + unique_words.length);
       }
       var lookup_count=0;
-
-
-
-
-
-      
-      var recursiveWordLoop = function(index) {
-        if(index>=len) {
-          console.log("END");
-          console.log("Looked up " + String(Math.round(100*lookup_count/index)) + "% of words");
-          return true;
-        } else if(!!unique_words[index]) {
-          console.log(index+1);
-          var search_word = unique_words[index];
-          Word.findOne({word: search_word}, function(mongo_err, mongo_obj){
-            if(mongo_err) {
-              console.log("**Mongo Error: " + mongo_err + "**");
-            }
-            else if(!mongo_obj) {
-              var mw_url = "http://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + search_word + "?key=" + mwdictkey;
-              request(mw_url, function(dict_err, dict_response, dict_body) {
-                if(dict_err) {
-                  console.log("**Dictionary lookup error: " + dict_err + "**");
-                } else {
-                  $ = cheerio.load(dict_body);
-                  var base_obj= $("ew");
-                  if(!!base_obj.length) {
-                    var base_word = base_obj.first().text();
-                    var new_word = new Word({
-                      word: unique_words[index],
-                      base: base_word
-                    });
-                    new_word.save();
-                    lookup_count++;
-                    recursiveWordLoop(index+1);
-                  } else {
-                    recursiveWordLoop(index+1);
-                  }
-                }
-              });
-            } else {
-              recursiveWordLoop(index+1);
-            }
-          });
-        } else {
-          console.log(index+1);
-          recursiveWordLoop(index+1);
-        }
-      };
-      recursiveWordLoop(i);
+      var stemmer = new Snowball('English');
+      var recipe_text = [];
+      for(var i=0,len=unique_words.length; i<len; i++){
+        console.log(unique_words[i]);
+        stemmer.setCurrent(unique_words[i]);
+        stemmer.stem();
+        recipe_text.push("\n" + unique_words[i] + ": " + stemmer.getCurrent());
+      }
+      console.log("**********\n" + recipe_text);
     });
   });
 };
@@ -283,6 +246,63 @@ exports.makeSeed = function(req, res) {
       } else {
         res.send("Seed made");
       }
+    });
+  });
+};
+
+// Returns an of all tags
+exports.getTags = function(req, res) {
+  Tag.find({}, function(err, tagArr) {
+    if(err) { return handleError(res, err); }
+    return res.json(200, tagArr);
+  });
+};
+
+// Creates a new tag or updates an existing tag
+exports.updateOrCreateTag = function(req, res) {
+  var obj = req.body;
+  var stemmer = new Snowball('English');
+  stemmer.setCurrent(obj.display_word);
+  stemmer.stem();
+  obj.base_word = stemmer.getCurrent();
+  Tag.findOneAndUpdate({display_word:obj.display_word}, obj, function(err, tag) {
+    console.log(tag);
+    if(err) { 
+      console.log("here now");
+      return handleError(res, err); 
+    } 
+    else if(tag===null) {
+      console.log("right here");
+      var new_tag = new Tag(obj);
+      new_tag.save(function(errNewSave){
+        if(errNewSave) {
+          handleError(res, errNewSave);
+        }
+        else {
+          console.log("Saving new entry");
+          Tag.find({}, function(errFindAll, tagArr){
+            if(errFindAll) { return handleError(res, errFindAll); }
+            return res.json(200, {'array': tagArr});
+          });
+        }
+      });
+    } else {
+      console.log("yo");
+      Tag.find({}, function(errFindAll, tagArr){
+        if(errFindAll) { return handleError(res, errFindAll); }
+        return res.json(200, {'array': tagArr});
+      });
+    }
+  });
+};
+
+exports.destroyTag = function(req, res) {
+  Tag.findById(req.params.id, function (err, tag) {
+    if(err) { return handleError(res, err); }
+    if(!tag) { return res.send(404); }
+    tag.remove(function(err) {
+      if(err) { return handleError(res, err); }
+      return res.send(204);
     });
   });
 };
