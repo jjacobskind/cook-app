@@ -117,10 +117,16 @@ exports.getRecipes = function(req, res) {
   Source.find({}, function(err, resultArr) {
     var stored_urls = [];
     var stored_pending = [];
+
+    // Loads array of domains that are already registered in selector tool
+    // These arrays will be used to determine whether a result can be displayed
+    // Or whether the domain should be added to the selector tool
     resultArr.forEach(function(item) {
       stored_urls.push(item.url);
       stored_pending.push(item.pending);
     });
+
+    // Making the API call
     request(url, function(err, response, body) {
       var data = JSON.parse(body);
       var titles = [];
@@ -128,6 +134,8 @@ exports.getRecipes = function(req, res) {
           var fixed_url = fixUrl(item.source_url);
           var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
           var arr_index = stored_urls.indexOf(domain);
+          
+          // If domain is not in selector tool, add it
           if(arr_index===-1) {
             var new_entry = new Source({
               name:domain,
@@ -138,6 +146,8 @@ exports.getRecipes = function(req, res) {
             new_entry.save();
             stored_urls.push(domain);
             stored_pending.push(true);
+
+            // If domain already has a selector picked, push recipe onto array for tagging/potential display
           } else if(!stored_pending[arr_index]){
             titles.push({'name': item.title, 'url': fixed_url});
           }

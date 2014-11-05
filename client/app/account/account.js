@@ -13,6 +13,11 @@ angular.module('generatorApp')
         templateUrl: 'app/account/signup/signup.html',
         controller: 'SignupCtrl'
       })
+      .state('onboard', {
+        url: '/onboard',
+        templateUrl: 'app/account/onboard/onboard.html',
+        controller: 'OnboardCtrl'
+      })
       .state('settings', {
         url: '/settings',
         templateUrl: 'app/account/settings/settings.html',

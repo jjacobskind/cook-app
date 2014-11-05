@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('generatorApp')
-  .controller('LoginCtrl', function ($scope, Auth, $location, $window) {
+  .controller('LoginCtrl', function ($scope, Auth, $state, $window) {
     $scope.user = {};
     $scope.errors = {};
 
@@ -15,7 +15,7 @@ angular.module('generatorApp')
         })
         .then( function() {
           // Logged in, redirect to home
-          $location.path('/');
+          $state.go('home');
         })
         .catch( function(err) {
           $scope.errors.other = err.message;

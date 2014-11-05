@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('generatorApp')
-  .controller('SignupCtrl', function ($scope, Auth, $location, $window) {
+  .controller('SignupCtrl', function ($scope, Auth, $state, $window) {
     $scope.user = {};
     $scope.errors = {};
 
@@ -16,7 +16,7 @@ angular.module('generatorApp')
         })
         .then( function() {
           // Account created, redirect to home
-          $location.path('/');
+          $state.go('onboard');
         })
         .catch( function(err) {
           err = err.data;

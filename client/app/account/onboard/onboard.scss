@@ -1,0 +1,50 @@
+#onboard_header{
+	text-align:center;
+
+	input {
+		font-size:2em;
+	}
+}
+
+#onboard_skills {
+
+
+	.cell {
+		background-color: #ddd;
+		border-radius: 3px;
+		margin:2px;
+		height:80px;
+
+		.skill_blurb {
+			font-size:0.6em;
+		}
+
+		.skill_name {
+			padding-top:5px;
+			margin-bottom: 3px;
+		}
+
+		.btn-col {
+			padding:0;
+		}
+
+		.row {
+			margin:2px;
+		}
+	}
+
+	#selected_skills_col {
+		margin-left: -100px;
+
+		ul {
+			list-style:none;
+		}
+
+		li {
+			background-color: #ddd;
+			border-radius: 3px;
+			text-align: left;
+			padding: 5px;
+		}
+	}
+}

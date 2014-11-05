@@ -1,0 +1,37 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+<div id='onboard_header'>
+	<h1>Welcome, {{user.name}}</h1>
+	<p>Please select a few cooking skills that you are familiar with or want to learn.</p>
+	<br>
+	<input type='text' ng-model='skill' ng-change='autoComplete()' />
+</div>
+<br><br>
+<div id="onboard_skills" class='table-centered col-md-10 col-lg-10'>
+	<div class='col-md-10 col-lg-10'>
+		<div class='cell col-md-2 col-lg-2' ng-repeat='suggestion in suggestions | orderBy: "display_word"'>
+			<div class='row'>
+				<div class=' btn-col col-md-2 col-lg-2' ng-switch='!!suggestion.picked'>
+					<a ng-switch-when='false' href='#' ng-click='toggleSkill(suggestion)' class='btn btn-sm btn-primary'>Add</a>
+					<a ng-switch-when='true' href='#' ng-click='toggleSkill(suggestion)' class='btn btn-sm btn-danger'>Remove</a>
+				</div>
+				<p class='skill_name'>{{suggestion.display_word}}</p>
+			</div>
+			<div class='skill_blurb row'>
+				<p>Short, but descriptive blurb about this skill.</p>
+			</div>
+		</div>
+	</div>
+	<div class='col-md-2 col-lg-2' id='selected_skills_col'>
+		<div class='row'>
+			<h3>Selected Skills</h3>
+		</div>
+		<div class='row'>
+			<ul>
+				<li ng-repeat='skill in selected_skills'>
+					<button class='btn btn-small btn-danger' ng-click='toggleSkill(skill)'>Remove</button>
+					{{skill.display_word}}
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

@@ -93,6 +93,24 @@ exports.me = function(req, res, next) {
   });
 };
 
+// Adds or removes skill tags from the user's account
+exports.changeTags = function(req, res) {
+  var skill = req.body.skill_tag;
+  var id = req.body.id;
+  User.findById(id, function(err, user){
+    if(req.body.add) {
+      user.skills.push(skill);
+      user.save();
+      res.send("finished");
+    } else {
+      var index = user.skills.indexOf(skill);
+      user.skills.splice(index,1);
+      user.save();
+      res.send("finished");
+    }
+  });
+};
+
 /**
  * Authentication callback
  */
