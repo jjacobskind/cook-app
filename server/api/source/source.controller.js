@@ -205,7 +205,13 @@ function tagRecipe(url, tagArr, name, source) {
         tag_ids.push(tagArr[i]._id);
         display_tags.push(tagArr[i]._id);
       }
-      for(var i=0,len=unique_words.length; i<len; i++) {
+      if(!unique_words) {
+        var len=0;
+      }
+      else{
+        len=unique_words.length;
+      }
+      for(var i=0; i<len; i++) {
         stemmer.setCurrent(unique_words[i]);
         stemmer.stem();
         var stemmed_word = stemmer.getCurrent();
@@ -232,11 +238,17 @@ function tagRecipe(url, tagArr, name, source) {
                 'tags': matched_ids,
                 'date_tagged': String(d.getFullYear() + " " + d.getMonth() + " " + d.getDate())
             });
-            new_recipe.save();  //NEED TO GET THE STORED ITEM BACK FROM MONGO!!!!
+            new_recipe.save(function(err_alpha, saved_item){
+              saved_item.populate('tags', function(err_beta, populated_entry){
+                all_results.push(populated_entry);
+              });
+            });  //NEED TO GET THE STORED ITEM BACK FROM MONGO!!!!
             all_results.push(d);
           } else {
             // TAG IDS GET POPULATED HERE
-            all_results.push(entry);
+            entry.populate('tags', function(err, populated_entry){
+              all_results.push(populated_entry);
+            })
           }
           all_results_tagged++;
           console.log(all_results_tagged);

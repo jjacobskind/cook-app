@@ -12,7 +12,11 @@
       <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in awesomeThings">
         <li>
           <a href="{{thing.url}}" target="_blank" tooltip="{{thing.info}}">{{thing.name}}</a>
-          <p class="tags">{{thing.tags}}</p>
+          <p class="tags">
+            <span ng-repeat="tag in thing.tags | orderBy: 'display_word'">
+              <a href="#" >{{tag.display_word}}</a>{{$last ? '':', '}}
+            </span>
+          </p>
         </li>
       </ul>
     </div>
