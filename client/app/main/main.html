@@ -10,7 +10,10 @@
     <div class="col-lg-12">
       <h1 class="page-header">Recipes:</h1>
       <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in awesomeThings">
-        <li><a href="#" ng-click="tagRecipe(thing.url)" tooltip="{{thing.info}}">{{thing.name}}</a></li>
+        <li>
+          <a href="{{thing.url}}" target="_blank" tooltip="{{thing.info}}">{{thing.name}}</a>
+          <p class="tags">{{thing.tags}}</p>
+        </li>
       </ul>
     </div>
   </div>

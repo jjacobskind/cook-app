@@ -12,7 +12,10 @@ var querystring = require('querystring');
 var fs = require('fs');
 var mwdictkey = require('../../config/environment/production').mwdictkey;
 var Snowball = require('snowball');
-// var socket = require('socket.io')(323);
+// var socket = require('socket.io')();
+
+var all_results_tagged = 0;   //keeps count of how many of the asycn functions have finished tagging
+var all_results = [];   //contains all results tagged by parallel tagRecipe instances
 
 // Get list of sources
 exports.index = function(req, res) {
@@ -139,17 +142,34 @@ exports.getRecipes = function(req, res) {
             titles.push({'name': item.title, 'url': fixed_url});
           }
       });
-      for(var i=0, len=titles.length; i<len;i++) {
-        tagRecipe(titles[i].url);
-      }
-      res.send(titles);
+      Tag.find({}, function(err, tagArr) {
+        i=tagArr.length;
+        var base_tags = [];
+        var display_tags = [];
+        while(i--) {
+          base_tags.push(tagArr[i].base_word);
+          display_tags.push(tagArr[i].display_word);
+        }
+        for(var i=0, len=titles.length; i<len;i++) {
+          tagRecipe(titles[i].url, tagArr, titles[i].name, "f2f");
+        }
+        var total = titles.length;
+        all_results_tagged = 0;
+        all_results = [];
+        var tag_waiting = setInterval(function() {
+          if(all_results_tagged === total) {
+            clearInterval(tag_waiting);
+            res.send(all_results);
+          }
+        }, 100);
+      });
     });
 
   });
 };
 
 // Scrapes recipe from source, auto-tags it by F2F ID, and saves entry in DB
-function tagRecipe(url) {
+function tagRecipe(url, tagArr, name, source) {
   // var url = req.body.url;
   var fixed_url = fixUrl(url);
   var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
@@ -171,19 +191,59 @@ function tagRecipe(url) {
         var len = unique_words.length;
         var i=0;
       }
-      if(!!unique_words){
-        console.log("Number of unique words: " + unique_words.length);
-      }
       var lookup_count=0;
       var stemmer = new Snowball('English');
       var recipe_text = [];
-      for(var i=0,len=unique_words.length; i<len; i++){
-        console.log(unique_words[i]);
+      var matched_tags=[];
+      var base_tags = [];
+      var tag_ids = [];
+      var display_tags = [];
+      var matched_ids = [];
+      i=tagArr.length;
+      while(i--) {
+        base_tags.push(tagArr[i].base_word);
+        tag_ids.push(tagArr[i]._id);
+        display_tags.push(tagArr[i]._id);
+      }
+      for(var i=0,len=unique_words.length; i<len; i++) {
         stemmer.setCurrent(unique_words[i]);
         stemmer.stem();
-        recipe_text.push("\n" + unique_words[i] + ": " + stemmer.getCurrent());
+        var stemmed_word = stemmer.getCurrent();
+        recipe_text.push(stemmed_word);
+        var base_index = base_tags.indexOf(stemmed_word);
+        if((base_index!==-1) && (matched_tags.indexOf(display_tags[base_index])===-1)) {
+          matched_tags.push(display_tags[base_index]);
+          matched_ids.push(tag_ids[base_index]);
+        }
       }
-      console.log("**********\n" + recipe_text);
+      if(matched_tags.length>0) {
+        Recipe.findOne({'url': url}, function(err, entry){
+          if(err) {
+            console.log("ERROR: Post Tag Matching: " + err);
+          }
+          else if(!entry) {
+            var d = new Date();
+            var new_recipe = new Recipe({
+                'name': name,
+                'recipe_text': text.join(" "),
+                'stemmed_words': recipe_text,
+                'source': source,
+                'url': url,
+                'tags': matched_ids,
+                'date_tagged': String(d.getFullYear() + " " + d.getMonth() + " " + d.getDate())
+            });
+            new_recipe.save();  //NEED TO GET THE STORED ITEM BACK FROM MONGO!!!!
+            all_results.push(d);
+          } else {
+            // TAG IDS GET POPULATED HERE
+            all_results.push(entry);
+          }
+          all_results_tagged++;
+          console.log(all_results_tagged);
+        })
+      } else {
+        all_results_tagged++;
+      }
     });
   });
 };
@@ -266,20 +326,16 @@ exports.updateOrCreateTag = function(req, res) {
   stemmer.stem();
   obj.base_word = stemmer.getCurrent();
   Tag.findOneAndUpdate({display_word:obj.display_word}, obj, function(err, tag) {
-    console.log(tag);
     if(err) { 
-      console.log("here now");
       return handleError(res, err); 
     } 
     else if(tag===null) {
-      console.log("right here");
       var new_tag = new Tag(obj);
       new_tag.save(function(errNewSave){
         if(errNewSave) {
           handleError(res, errNewSave);
         }
         else {
-          console.log("Saving new entry");
           Tag.find({}, function(errFindAll, tagArr){
             if(errFindAll) { return handleError(res, errFindAll); }
             return res.json(200, {'array': tagArr});
@@ -287,7 +343,6 @@ exports.updateOrCreateTag = function(req, res) {
         }
       });
     } else {
-      console.log("yo");
       Tag.find({}, function(errFindAll, tagArr){
         if(errFindAll) { return handleError(res, errFindAll); }
         return res.json(200, {'array': tagArr});

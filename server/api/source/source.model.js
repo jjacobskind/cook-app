@@ -31,16 +31,13 @@ var TagSchema = new Schema({
 var RecipeSchema = new Schema({
 	name: {type: String, required: true},
 	recipe_text: {type: String, required: true},
-	recipe_base_words: {type: [String], required: true},
-	index: {type: String, required: true},
-	source_url: {type: String, required: true},
-	tags: [TagSchema]
+	stemmed_words: {type: [String], required: true},
+	url: {type: String, required: true},
+	source: {type: String, required: true},
+	tags: [{type: mongoose.Schema.ObjectId, ref: 'Tag'}],
+	date_tagged: {type: String, required:true},
+	author: String
 });
-
-/*
-	RecipeSchema Index Scheme:
-		114: prefix tag for recipes obtained from Food2Fork
-*/
 
 var WordSchema = new Schema({
 	word: {type: String, required: true},
