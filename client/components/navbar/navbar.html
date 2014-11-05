@@ -7,14 +7,14 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a href="/" class="navbar-brand">Cook App</a>
+      <a href="#" ui-sref="home" class="navbar-brand">Cook App</a>
     </div>
     <div collapse="isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
         <li ng-repeat="item in menu" ng-class="{active: isActive(item.state)}">
-            <a ui-sref="{{item.state}}">{{item.title}}</a>
+            <a href="#" ui-sref="{{item.state}}">{{item.title}}</a>
         </li>
-        <li ng-show="isAdmin()" ng-class="{active: isActive('/admin')}"><a href="admin">Admin</a></li>
+        <li ng-show="isAdmin()" ng-class="{active: isActive('/admin')}"><a ui-sref='admin' href='#'>Admin</a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">

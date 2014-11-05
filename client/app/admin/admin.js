@@ -27,5 +27,11 @@ angular.module('generatorApp')
         url: '/tags',
         templateUrl: 'app/admin/templates/admin-tags/admin-tags.html',
         controller: 'AdminTagsCtrl'
-      });
+      })
+
+      .state('admin.skills', {
+        url: '/tags',
+        templateUrl: 'app/admin/templates/admin-tags/admin-tags.html',
+        controller: 'AdminTagsCtrl'
+      });;
   });

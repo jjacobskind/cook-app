@@ -2,10 +2,12 @@
 
 angular.module('generatorApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
-    $scope.menu = [{
-      'title': 'Home',
-      'state': 'main'
-    }];
+    $scope.menu = [
+      {
+        'title': 'Profile',
+        'state': 'profile'
+      }
+    ];
 
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
