@@ -128,6 +128,32 @@ UserSchema.methods = {
     return this.encryptPassword(plainText) === this.hashedPassword;
   },
 
+
+  populateSkills: function(cb) {
+    // create simple array of skill ids
+    var skill_arr = this.skills;
+    var skill_tags = skill_arr.map(function(item){
+      return item.skill_tag;
+    });
+    var self = this;
+    mongoose.model('Tag').find({_id:{$in:skill_tags}}).exec()
+      .then(function(tagArr){
+        var new_skills_arr = tagArr.map(function(item){
+          var i=0;
+          while(i<self.skills.length){
+            if(String(self.skills[i].skill_tag)==String(item._id)){
+              var new_item = {'skill_tag': item, 'skill_level': self.skills[i].skill_level};
+              return new_item;
+            }
+            i++;
+          }
+        });
+        var pop_user = self.toObject();
+        pop_user.skills=new_skills_arr;
+        cb(null, pop_user);
+      });
+  },
+
   /**
    * Make salt
    *

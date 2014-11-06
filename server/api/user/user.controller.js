@@ -91,14 +91,15 @@ exports.me = function(req, res, next) {
   }, '-salt -hashedPassword', function(err, user) { // don't ever give out the password or salt
     if (err) return next(err);
     if (!user) return res.json(401);
-    res.json(user);
+    user.populateSkills(function(err,pop_user) {
+      res.json(pop_user);
+    })
   });
 };
 
 // Adds or removes skill tags from the user's account
 exports.changeTags = function(req, res) {
   var skill = req.body.skill_tag;
-  console.log("AAA", skill);
   var id = req.body.id;
   User.findById(id, function(err, user){
     if(req.body.add) {
