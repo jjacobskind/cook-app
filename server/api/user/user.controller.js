@@ -1,9 +1,11 @@
 'use strict';
 
 var User = require('./user.model');
+var Tag = require('../source/source.model').tag;
 var passport = require('passport');
 var config = require('../../config/environment');
 var jwt = require('jsonwebtoken');
+var async = require('async');
 
 var validationError = function(res, err) {
   return res.json(422, err);
@@ -96,6 +98,7 @@ exports.me = function(req, res, next) {
 // Adds or removes skill tags from the user's account
 exports.changeTags = function(req, res) {
   var skill = req.body.skill_tag;
+  console.log("AAA", skill);
   var id = req.body.id;
   User.findById(id, function(err, user){
     if(req.body.add) {

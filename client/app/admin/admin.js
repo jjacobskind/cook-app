@@ -16,11 +16,9 @@ angular.module('generatorApp')
       })
 
       .state('admin.users', {
-		url: '/users',
-    	templateUrl: 'app/admin/templates/admin-users/admin-users.html',
-    	controller: function($scope, User) {
-    		$scope.users = User.query();
-    	}
+    		url: '/users',
+      	templateUrl: 'app/admin/templates/admin-users/admin-users.html',
+      	controller: 'AdminUserCtrl'
       })
 
       .state('admin.tags', {

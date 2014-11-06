@@ -19,7 +19,12 @@ var UserSchema = new Schema({
   twitter: {},
   google: {},
   github: {},
-  skills: [{type: mongoose.Schema.ObjectId, ref: 'Tag'}]
+  skills: [
+            {
+              skill_tag: {type: mongoose.Schema.ObjectId, ref: 'Tag'},
+              skill_level: {type:Number, required:true}
+            }
+          ]
 });
 
 /**

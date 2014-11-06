@@ -8,6 +8,11 @@
 		</div>
 		<div class='cell col-md-10 col-lg-10'>
 			<h2>Top Skills</h2>
+			<ul id='skill_list'>
+				<li ng-repeat='skill in user.skills'>
+					<a href='#'>{{skill.display_word}}</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 	<div class='row'>

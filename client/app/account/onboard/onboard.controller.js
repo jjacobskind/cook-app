@@ -12,6 +12,7 @@ angular.module('generatorApp')
 			if($scope.skill.length>0) {
 				var entry_len = $scope.skill.length;
 				var i = skill_tags.length;
+				console.log(skill_tags);
 				while((i--) && ($scope.suggestions.length<20)) {
 					if(skill_tags[i].display_word.substring(0,entry_len)===$scope.skill){
 						$scope.suggestions.push(skill_tags[i]);
@@ -22,8 +23,12 @@ angular.module('generatorApp')
 		$scope.toggleSkill = function(skill_obj) {
 			var index = $scope.selected_skills.indexOf(skill_obj);
 			var tags_index = skill_tags.indexOf(skill_obj);
-			var post_obj = { skill_tag: skill_obj._id,
-							id: $scope.user._id		
+			var post_obj = { 
+					skill_tag: {
+						skill_tag: skill_obj._id,
+						skill_level: 0
+					},
+					id: $scope.user._id		
 			};
 			if(index===-1) {
 				$scope.selected_skills.push(skill_obj);
@@ -37,7 +42,7 @@ angular.module('generatorApp')
 
 			$http.post('/api/users/tags', post_obj)
 				.success(function(res){
-
+					console.log(res);
 				});
 		};
 	});
