@@ -12,6 +12,8 @@ var querystring = require('querystring');
 var fs = require('fs');
 var mwdictkey = require('../../config/environment/production').mwdictkey;
 var Snowball = require('snowball');
+var Q = require('q');
+var search = require('./search');
 // var socket = require('socket.io')();
 
 var all_results_tagged = 0;   //keeps count of how many of the asycn functions have finished tagging
@@ -111,77 +113,60 @@ exports.test = function(req, res) {
 // Searches Fork2Food's API
 exports.getRecipes = function(req, res) {
   var url = 'http://food2fork.com/api/search?' + querystring.stringify({
-    key:f2fkey,
-    q: req.body.search
+    'key':f2fkey,
+    'q': req.body.search
   });
-  Source.find({}, function(err, resultArr) {
-    var stored_urls = [];
-    var stored_pending = [];
+  var search_info ={};
 
-    // Loads array of domains that are already registered in selector tool
-    // These arrays will be used to determine whether a result can be displayed
-    // Or whether the domain should be added to the selector tool
-    resultArr.forEach(function(item) {
-      stored_urls.push(item.url);
-      stored_pending.push(item.pending);
-    });
 
-    // Making the API call
-    request(url, function(err, response, body) {
-      var data = JSON.parse(body);
-      var titles = [];
-      data.recipes.forEach(function(item){
-          var fixed_url = fixUrl(item.source_url);
-          var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
-          var arr_index = stored_urls.indexOf(domain);
-          
-          // If domain is not in selector tool, add it
-          if(arr_index===-1) {
-            var new_entry = new Source({
-              name:domain,
-              url:domain,
-              recipe_page:fixed_url,
-              pending:true
+  // Loads array of domains that are already registered in selector tool
+  // These arrays will be used to determine whether a result can be displayed
+  // Or whether the domain should be added to the selector tool
+  Source.find({}).exec()
+    .then(search.getDomains)
+    .then(function(ret_info){
+      search_info = ret_info;
+      search_info.cur_url = url;
+      return search_info;
+    })
+    .then(function(search_info){
+      Q.nfcall(request, search_info.cur_url)
+        .then(function(res){
+          search_info.titles = search.searchRecipes(search_info, res[0].body);
+          return search_info;
+        })
+        .then(function(search_info){
+          Tag.find({}).exec()
+            .then(function(tagArr){
+              var i=tagArr.length;
+              var base_tags = [];
+              var display_tags = [];
+              while(i--) {
+                base_tags.push(tagArr[i].base_word);
+                display_tags.push(tagArr[i].display_word);
+              }
+              for(var i=0, len=search_info.titles.length; i<len;i++) {
+                tagRecipe(search_info.titles[i].url, tagArr, search_info.titles[i].name, "f2f");
+              }
+              all_results_tagged = 0;
+              all_results = [];
+              var total = search_info.titles.length;
+              var tag_waiting = setInterval(function() {
+                if(all_results_tagged === total) {
+                  clearInterval(tag_waiting);
+                  res.send(all_results);
+                }
+              }, 100);
             });
-            new_entry.save();
-            stored_urls.push(domain);
-            stored_pending.push(true);
-
-            // If domain already has a selector picked, push recipe onto array for tagging/potential display
-          } else if(!stored_pending[arr_index]){
-            titles.push({'name': item.title, 'url': fixed_url});
-          }
-      });
-      Tag.find({}, function(err, tagArr) {
-        i=tagArr.length;
-        var base_tags = [];
-        var display_tags = [];
-        while(i--) {
-          base_tags.push(tagArr[i].base_word);
-          display_tags.push(tagArr[i].display_word);
-        }
-        for(var i=0, len=titles.length; i<len;i++) {
-          tagRecipe(titles[i].url, tagArr, titles[i].name, "f2f");
-        }
-        var total = titles.length;
-        all_results_tagged = 0;
-        all_results = [];
-        var tag_waiting = setInterval(function() {
-          if(all_results_tagged === total) {
-            clearInterval(tag_waiting);
-            res.send(all_results);
-          }
-        }, 100);
-      });
+        })
+        .fail(function(err){ console.log(err); });
     });
-
-  });
 };
 
 // Scrapes recipe from source, auto-tags it by F2F ID, and saves entry in DB
 function tagRecipe(url, tagArr, name, source) {
   // var url = req.body.url;
-  var fixed_url = fixUrl(url);
+  var fixed_url = search.fixUrl(url);
   var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
   Source.findOne({url:domain}, function(err, item) {
     var selector = item.selector;
@@ -269,37 +254,6 @@ function tagRecipe(url, tagArr, name, source) {
     });
   });
 };
-
-//Gets rid of the www in a url
-function fixUrl(url) {
-  if(url.substring(0,5) === "www.") {
-    var fixed_url = "http://" + url.substring(4);
-  }
-  else if(url.substring(0,11)==="http://www.") {
-    fixed_url = "http://" + url.substring(11);
-  }
-  else {
-    fixed_url=url;
-  }
-  // console.log(fixed_url);
-  return fixed_url;
-};
-
-//Gets rid of the www in a url
-function fixUrl(url) {
-  if(url.substring(0,5) === "www.") {
-    var fixed_url = "http://" + url.substring(4);
-  }
-  else if(url.substring(0,11)==="http://www.") {
-    fixed_url = "http://" + url.substring(11);
-  }
-  else {
-    fixed_url=url;
-  }
-  // console.log(fixed_url);
-  return fixed_url;
-};
-
 
 // Saves Source data in seed file as backup
 exports.makeSeed = function(req, res) {

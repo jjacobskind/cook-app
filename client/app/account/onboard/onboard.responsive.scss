@@ -1,0 +1,14 @@
+@media only screen and (max-width : 1320px) {
+	.cell {
+		min-width: 200px;
+	}
+
+	#selected_skills_col {
+		margin-left: -50px;
+
+		li {
+			min-width:150px;
+			text-align:center;
+		}
+	}
+}
