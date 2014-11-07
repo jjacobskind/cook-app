@@ -69,7 +69,6 @@ exports.getTags = function(tagArr, res, search_info){
 	var total = search_info.titles.length;
 	var tag_waiting = setInterval(function() {
     if(all_results.length>=5){
-      console.timeEnd('tagging');
       clearInterval(tag_waiting);
       res.send(all_results)
     }

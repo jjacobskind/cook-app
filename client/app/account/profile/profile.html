@@ -1,8 +1,10 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
-<h1>{{user.name}}'s Profile</h1>
 
 <div class='table-centered col-md-8 col-lg-8 profile_table'>
-	<div class='row'>
+	<div class='row' id="profile_header">
+		<h1>{{user.name}}'s Profile</h1>
+	</div>
+	<div>
 		<div class=' cell col-md-2 col-lg-2'>
 			<h2>Picture</h2>
 		</div>
