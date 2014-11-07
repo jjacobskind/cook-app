@@ -7,6 +7,7 @@ var Tag = require('./source.model').tag;
 var Recipe = require('./source.model').recipe;
 var cheerio = require('cheerio');
 var Snowball = require('snowball');
+var async = require('async');
 
 var all_results_tagged = 0;
 var all_results = [];
@@ -87,13 +88,9 @@ exports.tagRecipe = function(url, tagArr, name, source) {
   var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
   Source.findOne({url:domain}, function(err, item) {
     var selector = item.selector;
-    // var timer = setTimeout(function() {
-    //   all_results_tagged++;
-    //   clearTimeout(timer);
-    // }, 2000);
 
     request(url, function(err, response, body) {
-      // clearTimeout(timer);
+
       if(err) {
         console.log("Scrape Error: " + err);
       }
@@ -140,6 +137,8 @@ exports.tagRecipe = function(url, tagArr, name, source) {
           matched_ids.push(tag_ids[base_index]);
         }
       }
+      // var addRecipeToSkill = function(entry) {
+      // };
       if(matched_tags.length>0) {
         Recipe.findOne({'url': url}, function(err, entry){
           if(err) {
@@ -159,17 +158,31 @@ exports.tagRecipe = function(url, tagArr, name, source) {
             new_recipe.save(function(err_alpha, saved_item){
               saved_item.populate('tags', function(err_beta, populated_entry){
                 all_results.push(populated_entry);
+
+                // Add recipe ID to its matching skill tags
+                var parallelTasks = matched_ids.map(function(item){
+                  return function(callback) {
+                    Tag.findById(item, function(err, skill_tag){
+                      if(skill_tag.recipes.indexOf(saved_item._id)===-1){
+                        skill_tag.recipes.push(saved_item._id);
+                        skill_tag.save();
+                      }
+                      callback();
+                    });
+                  };
+                });
+                async.parallel(parallelTasks, function(){
+                  console.log("Parallel finish!");
+                });
               });
             });
-            all_results.push(d);
           } else {
             // TAG IDS GET POPULATED HERE
             entry.populate('tags', function(err, populated_entry){
               all_results.push(populated_entry);
-            })
+            });
           }
           all_results_tagged++;
-          // console.log(all_results_tagged);
         })
       } else {
         all_results_tagged++;
@@ -190,6 +203,5 @@ exports.fixUrl =function(url) {
   else {
     fixed_url=url;
   }
-  // console.log(fixed_url);
   return fixed_url;
 };

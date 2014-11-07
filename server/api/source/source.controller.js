@@ -14,6 +14,7 @@ var mwdictkey = require('../../config/environment/production').mwdictkey;
 var Snowball = require('snowball');
 var Q = require('q');
 var search = require('./search');
+var async = require('async');
 
 
 var all_results_tagged = 0;   //keeps count of how many of the asycn functions have finished tagging
@@ -33,10 +34,21 @@ exports.getSelectors = function(req, res) {
 
 // Get a single source
 exports.show = function(req, res) {
-  Tag.findById(req.params.id, function (err, source) {
+  Tag.findById(req.params.id, function (err, tag) {
     if(err) { return handleError(res, err); }
-    if(!source) { return res.send(404); }
-    return res.json(source);
+    if(!tag) { return res.send(404); }
+    tag.populate('recipes', function(err1, populatedTag){
+      var recipesArr = populatedTag.recipes.map(function(item){
+        return function(cb){
+          item.populate('tags', function(err, obj){
+            cb();
+          });
+        };
+      });
+      async.parallel(recipesArr, function() {
+        return res.json(populatedTag);
+      });
+    });
   });
 };
 
