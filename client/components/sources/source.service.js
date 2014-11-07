@@ -32,7 +32,7 @@ angular.module('generatorApp')
       get: {
         method: 'GET',
         params: {
-          id:'me'
+          id:'@_id'
         }
       },
       save: {

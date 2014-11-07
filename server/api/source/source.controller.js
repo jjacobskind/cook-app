@@ -33,7 +33,7 @@ exports.getSelectors = function(req, res) {
 
 // Get a single source
 exports.show = function(req, res) {
-  Source.findById(req.params.id, function (err, source) {
+  Tag.findById(req.params.id, function (err, source) {
     if(err) { return handleError(res, err); }
     if(!source) { return res.send(404); }
     return res.json(source);
@@ -122,6 +122,7 @@ exports.getRecipes = function(req, res) {
   // Loads array of domains that are already registered in selector tool
   // These arrays will be used to determine whether a result can be displayed
   // Or whether the domain should be added to the selector tool
+      console.time('tagging');
   Source.find({}).exec()
 
     // Create search_info object containing 2 arrays
@@ -141,6 +142,7 @@ exports.getRecipes = function(req, res) {
     .then(function(search_info){
       Q.nfcall(request, search_info.cur_url)
         .then(function(res){
+        console.timeEnd('tagging');
           search_info.titles = search.searchRecipes(search_info, res[0].body);
           return search_info;
         })

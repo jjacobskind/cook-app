@@ -33,7 +33,9 @@
 	</div>
 	<div class="row" ng-repeat="tag in tags | orderBy:'display_word'">
 		<div class="cell col-md-3 col-lg-3">
-			<p>{{tag.display_word}}</p>
+			<p>
+				<a href='#' ui-sref='edit_skill({type: tag._id})'>{{tag.display_word}}</a>
+			</p>
 		</div>
 		<div class="cell col-md-3 col-lg-3">
 			<p>{{tag.base_word}}</p>

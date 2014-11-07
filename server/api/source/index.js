@@ -23,6 +23,7 @@ router.get('/seed', auth.hasRole('admin'), controller.makeSeed);
 router.post('/get_recipes', controller.getRecipes);
 
 router.get('/tags', controller.getTags);
+router.get('/tags/:id', controller.show);
 router.post('/tags', controller.updateOrCreateTag);
 router.delete('/tags/:id', controller.destroyTag);
 

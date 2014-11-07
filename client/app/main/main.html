@@ -14,7 +14,7 @@
           <a href="{{thing.url}}" target="_blank" tooltip="{{thing.info}}">{{thing.name}}</a>
           <p class="tags">
             <span ng-repeat="tag in thing.tags | orderBy: 'display_word'">
-              <a href="#" >{{tag.display_word}}</a>{{$last ? '':', '}}
+              <a href="#" ui-sref='skill({type: tag._id})' >{{tag.display_word}}</a>{{$last ? '':', '}}
             </span>
           </p>
         </li>

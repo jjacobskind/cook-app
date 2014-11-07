@@ -68,31 +68,43 @@ exports.getTags = function(tagArr, res, search_info){
 	}
 	var total = search_info.titles.length;
 	var tag_waiting = setInterval(function() {
+    if(all_results.length>=5){
+      console.timeEnd('tagging');
+      clearInterval(tag_waiting);
+      res.send(all_results)
+    }
 		if(all_results_tagged === total) {
 		  clearInterval(tag_waiting);
 		  res.send(all_results);
 		}
-	}, 100);
+	}, 10);
 };
 
 
 // Scrapes recipe from source, auto-tags it by F2F ID, and saves entry in DB
 exports.tagRecipe = function(url, tagArr, name, source) {
+  
   var fixed_url = exports.fixUrl(url);
   var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
   Source.findOne({url:domain}, function(err, item) {
     var selector = item.selector;
+    // var timer = setTimeout(function() {
+    //   all_results_tagged++;
+    //   clearTimeout(timer);
+    // }, 2000);
+
     request(url, function(err, response, body) {
+      // clearTimeout(timer);
       if(err) {
         console.log("Scrape Error: " + err);
       }
       else if(!err && response.statusCode==200){
         var $ = cheerio.load(body);
         var text = $(selector).text()
-                      .toLowerCase()
                       .replace(/[\.,\/#!$%\^&\*;:{}=_`~()0-9]/g,"")
                       .replace(/[\t\n]/g," ")
                       .replace(/\s{2,}/g," ")
+                      .toLowerCase()
                       .split(" ");
         var unique_words = _.unique(text);
         var len = unique_words.length;
@@ -149,7 +161,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
               saved_item.populate('tags', function(err_beta, populated_entry){
                 all_results.push(populated_entry);
               });
-            });  //NEED TO GET THE STORED ITEM BACK FROM MONGO!!!!
+            });
             all_results.push(d);
           } else {
             // TAG IDS GET POPULATED HERE
@@ -158,7 +170,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
             })
           }
           all_results_tagged++;
-          console.log(all_results_tagged);
+          // console.log(all_results_tagged);
         })
       } else {
         all_results_tagged++;
