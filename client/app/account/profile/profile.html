@@ -8,11 +8,12 @@
 		<div class=' cell col-md-2 col-lg-2'>
 			<h2>Picture</h2>
 		</div>
-		<div class='cell col-md-10 col-lg-10'>
-			<h2>Top Skills</h2>
+		<div class='cell col-md-7 col-lg-7'></div>
+		<div class=' cell col-md-3 col-lg-3' id='skill-col'>
+			<span class='subhead'>Top Skills</span><a href="#" class='edit_link' ui-sref="onboard">Edit</a>
 			<ul id='skill_list'>
 				<li ng-repeat='skill in user.skills'>
-					<a href='#'>{{skill.skill_tag.display_word}}</a>
+					<a href='#' ui-sref='skill({type:skill.skill_tag._id})'>{{skill.skill_tag.display_word}}</a>
 				</li>
 			</ul>
 		</div>

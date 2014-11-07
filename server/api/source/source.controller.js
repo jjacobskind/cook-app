@@ -124,7 +124,7 @@ exports.getRecipes = function(req, res) {
   // Or whether the domain should be added to the selector tool
   Source.find({}).exec()
 
-    // Create search_info object containing 2 arrays
+    // Add two arrays to search_info
     // First array contains the domain url
     // Second array contains a boolean value indicating whether a selector has been picked
     .then(search.getDomains)
