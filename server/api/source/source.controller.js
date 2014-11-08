@@ -132,41 +132,48 @@ exports.getRecipes = function(req, res) {
 
   var search_info ={};
 
+  // Filter recipe search results to match user's skills
   User.findById(req.body.id).exec()
     .then(function(user){
-      var user_skills = user.skills.map(function(item){
+      return user.skills.map(function(item){
         return String(item.skill_tag);
-      });
-
-      Recipe.find({tags: {$in: user_skills} }, function(err, recipes){
-        if(recipes.length>=5){
-          var filtered_recipes = recipes.filter(function(item){
-            var i = item.tags.length;
-            while(i--){
-              if(user_skills.indexOf(String(item.tags[i]))===-1) {
-                return false;
+      })
+    })
+    .then(function(user_skills){
+      Recipe.find({tags: {$in: user_skills} }).exec()
+        .then(function(recipes){
+          if(recipes.length>=5){
+            var filtered_recipes = recipes.filter(function(item){
+              var i = item.tags.length;
+              while(i--){
+                if(user_skills.indexOf(String(item.tags[i]))===-1) {
+                  return false;
+                }
               }
-            }
-            return true;
-          });
-          
-          var pop_func_array = filtered_recipes.map(function(item){
-
-            return function(cb){
-              item.populate('tags', function(err1, populated_item){
-                cb();
-              });
-            }
-          });
-
-          async.parallel(pop_func_array, function(results){
-              return res.send(filtered_recipes);
-          });
-        }
-
-      });
+              return true;
+            });
+            var pop_obj = {functions:[], values:[]};
+            pop_obj.functions = filtered_recipes.map(function(item){
+              var this_func =  function(cb){
+                item.populate('tags', function(err1, populated_item){
+                  pop_obj.values.push(populated_item);
+                  cb();
+                });
+              };
+              return this_func;
+            });
+            return pop_obj;
+          }
+        })
+        .then(function(pop_obj) {
+          Q.nfcall(async.parallel, pop_obj.functions)
+            .then(function(){
+                return res.send(pop_obj.values);
+            });
+        })
     });
-    return false;
+    return false; //Temporary cutoff for testing purposes
+
   // Loads array of domains that are already registered in selector tool
   // These arrays will be used to determine whether a result can be displayed
   // Or whether the domain should be added to the selector tool

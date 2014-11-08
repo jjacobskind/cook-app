@@ -33,3 +33,18 @@ p.tags {
     font-size: 0.8em;
     padding: 0 30px;
 }
+
+.search_row{
+    padding-top:20px; 
+    text-align: center;
+
+    .btn {
+        margin-top: -8px;
+    }
+}
+
+#search_box_main {
+    font-size:1.5em;
+    width: 80%;
+    min-width: 200px;
+}
