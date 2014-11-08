@@ -4,6 +4,7 @@ var _ = require('lodash');
 var Source = require('./source.model').source;
 var Tag = require('./source.model').tag;
 var Recipe = require('./source.model').recipe;
+var User = require('../user/user.model');
 var Word = require('./source.model').word;
 var cheerio = require('cheerio');
 var request = require('request');
@@ -128,9 +129,44 @@ exports.getRecipes = function(req, res) {
     'key':f2fkey,
     'q': req.body.search
   });
+
   var search_info ={};
 
+  User.findById(req.body.id).exec()
+    .then(function(user){
+      var user_skills = user.skills.map(function(item){
+        return String(item.skill_tag);
+      });
 
+      Recipe.find({tags: {$in: user_skills} }, function(err, recipes){
+        if(recipes.length>=5){
+          var filtered_recipes = recipes.filter(function(item){
+            var i = item.tags.length;
+            while(i--){
+              if(user_skills.indexOf(String(item.tags[i]))===-1) {
+                return false;
+              }
+            }
+            return true;
+          });
+          
+          var pop_func_array = filtered_recipes.map(function(item){
+
+            return function(cb){
+              item.populate('tags', function(err1, populated_item){
+                cb();
+              });
+            }
+          });
+
+          async.parallel(pop_func_array, function(results){
+              return res.send(filtered_recipes);
+          });
+        }
+
+      });
+    });
+    return false;
   // Loads array of domains that are already registered in selector tool
   // These arrays will be used to determine whether a result can be displayed
   // Or whether the domain should be added to the selector tool

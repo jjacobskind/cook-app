@@ -27,7 +27,7 @@
 		</div>
 		<div class='row'>
 			<ul>
-				<li ng-repeat='skill in selected_skills'>
+				<li ng-repeat='skill in selected_skills | orderBy: "display_word"'>
 					<button class='btn btn-small btn-danger' ng-click='toggleSkill(skill)'>Remove</button>
 					{{skill.display_word}}
 				</li>

@@ -12,7 +12,7 @@
 		<div class=' cell col-md-3 col-lg-3' id='skill-col'>
 			<span class='subhead'>Top Skills</span><a href="#" class='edit_link' ui-sref="onboard">Edit</a>
 			<ul id='skill_list'>
-				<li ng-repeat='skill in user.skills'>
+				<li ng-repeat='skill in user.skills | orderBy: ["skill_level", "skill_tag.display_word"]'>
 					<a href='#' ui-sref='skill({type:skill.skill_tag._id})'>{{skill.skill_tag.display_word}}</a>
 				</li>
 			</ul>

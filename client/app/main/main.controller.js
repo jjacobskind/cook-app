@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('generatorApp')
-  .controller('MainCtrl', function ($scope, $http) {
+  .controller('MainCtrl', function ($scope, $http, User) {
+    var user = User.get();
     $scope.search_text;
     $scope.awesomeThings = [];
 
@@ -18,7 +19,7 @@ angular.module('generatorApp')
     };
 
     $scope.getRecipes = function() {
-      $http.post('/api/sources/get_recipes', {search: $scope.search_text})
+      $http.post('/api/sources/get_recipes', {search: $scope.search_text, id:user._id})
         .success(function(recipe_list) {
           $scope.awesomeThings = recipe_list;
           console.log(recipe_list);
