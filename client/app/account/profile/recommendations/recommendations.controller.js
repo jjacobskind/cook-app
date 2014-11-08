@@ -1,11 +1,11 @@
 'use strict';
 
 angular.module('generatorApp')
-	.controller('RecommendedRecipesCtrl', function($scope, $http){
+	.controller('RecommendedRecipesCtrl', function($scope, $http, Auth){
 		$scope.awesomeThings = [];
-		$scope.search_text = "chicken";
+		$scope.id = Auth.getCurrentUser()._id;
 		$scope.getRecipes = function() {
-		  $http.post('/api/sources/get_recipes', {search: $scope.search_text})
+		  $http.get('/api/sources/get_recipes/' + $scope.id, {search: $scope.search_text})
 		    .success(function(recipe_list) {
 		      $scope.awesomeThings = recipe_list;
 		    });

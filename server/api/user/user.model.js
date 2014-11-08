@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var crypto = require('crypto');
 var authTypes = ['github', 'twitter', 'facebook', 'google'];
+var natural = require('natural');
 
 var UserSchema = new Schema({
   name: String,
@@ -24,7 +25,13 @@ var UserSchema = new Schema({
               skill_tag: {type: mongoose.Schema.ObjectId, ref: 'Tag'},
               skill_level: {type:Number, required:true}
             }
-          ]
+          ],
+  search_terms: [
+                {
+                  term: String,
+                  count: Number
+                }
+              ]
 });
 
 /**
@@ -152,6 +159,45 @@ UserSchema.methods = {
         pop_user.skills=new_skills_arr;
         cb(null, pop_user);
       });
+  },
+
+  addSearchTerms: function(terms){
+    var i=terms.length;
+    while(i--){
+      var stem_term = natural.PorterStemmer.stem(terms[i]);
+      var j=this.search_terms.length;
+      if(!j) {
+        this.search_terms.push( {term:terms[i], count:1} );
+      } else {
+        while(j--){
+          if(natural.PorterStemmer.stem(this.search_terms[j].term)===stem_term) {
+            this.search_terms[j].count++;
+            break;
+          }
+          else if(!j){
+            this.search_terms.push( {term:terms[i], count:1} );
+          }
+        }
+      }
+    }
+
+    // Sort search terms in order of decreasing count
+    i = this.search_terms.length-1;
+    var ordered=false;
+
+    while(i-- && !ordered){
+      // ordered = true;
+      for(j=0;j<i;j++){
+        if(this.search_terms[j].count<this.search_terms[j+1].count){
+          var temp = this.search_terms[j];
+          this.search_terms[j]= this.search_terms[j+1];
+          this.search_terms[j+1]= temp;
+          // ordered=false;
+        }
+      }
+    }
+
+    this.save();
   },
 
   /**

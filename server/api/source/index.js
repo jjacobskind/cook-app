@@ -20,6 +20,7 @@ router.delete('/selectors/:id', controller.destroy);
 router.get('/seed', auth.hasRole('admin'), controller.makeSeed);
 
 // Recipe functions
+router.get('/get_recipes/:id', auth.isAuthenticated(), controller.recommendedSearch);
 router.post('/get_recipes', controller.getRecipes);
 
 router.get('/tags', controller.getTags);

@@ -123,48 +123,85 @@ exports.test = function(req, res) {
   });
 };
 
+// Initiates a recommended search
+exports.recommendedSearch = function(req, res){
+  User.findById(req.params.id, function(err, user){
+    var terms = user.search_terms;
+    var range = Math.min(5, user.search_terms.length)-1;
+    var entry = Math.floor(Math.random()*range);
+    var obj = {body: { search: user.search_terms[entry].term, id: user._id, recommended: true } };
+    exports.getRecipes(obj, res);
+  });
+};
+
 // Searches Fork2Food's API
 exports.getRecipes = function(req, res) {
+  var search_terms = req.body.search;
+  var unique_terms = _.unique(search.wordProcess(search_terms));
   var url = 'http://food2fork.com/api/search?' + querystring.stringify({
     'key':f2fkey,
-    'q': req.body.search
+    'q': search_terms
   });
 
   var search_info ={};
 
-  // Filter recipe search results to match user's skills
+  // Get user's skills
   User.findById(req.body.id).exec()
     .then(function(user){
+      if(!req.body.recommended){
+        user.addSearchTerms(unique_terms);
+      }
       return user.skills.map(function(item){
         return String(item.skill_tag);
       })
     })
     .then(function(user_skills){
+
+      // Filter recipe results by user's skills
       Recipe.find({tags: {$in: user_skills} }).exec()
         .then(function(recipes){
-          if(recipes.length>=5){
-            var filtered_recipes = recipes.filter(function(item){
-              var i = item.tags.length;
-              while(i--){
-                if(user_skills.indexOf(String(item.tags[i]))===-1) {
-                  return false;
-                }
+          var filtered_recipes = recipes.filter(function(item){
+            var i = item.tags.length;
+            while(i--){
+              if(user_skills.indexOf(String(item.tags[i]))===-1) {
+                return false;
               }
-              return true;
-            });
-            var pop_obj = {functions:[], values:[]};
-            pop_obj.functions = filtered_recipes.map(function(item){
-              var this_func =  function(cb){
-                item.populate('tags', function(err1, populated_item){
-                  pop_obj.values.push(populated_item);
-                  cb();
-                });
-              };
-              return this_func;
-            });
-            return pop_obj;
-          }
+            }
+            return true;
+          });
+          return filtered_recipes;
         })
+
+        // Filter remaining results by search terms
+        .then(function(filtered_recipes){
+          return filtered_recipes.filter(function(item){
+            var i = item.stemmed_words.length;
+            while(i--){
+              if(unique_terms.indexOf(String(item.stemmed_words[i]))!==-1) {
+                return true;
+              }
+            }
+            return false;
+          });
+        })
+
+          // Create an object containing an array of populate functions
+          // And an array for results to be pushed into
+        .then(function(completely_filtered_recipes){
+          var pop_obj = {functions:[], values:[]};
+          pop_obj.functions = completely_filtered_recipes.map(function(item){
+            var this_func =  function(cb){
+              item.populate('tags', function(err1, populated_item){
+                pop_obj.values.push(populated_item);
+                cb();
+              });
+            };
+            return this_func;
+          });
+          return pop_obj;
+        })
+
+        // populate the recipe result skill tags
         .then(function(pop_obj) {
           Q.nfcall(async.parallel, pop_obj.functions)
             .then(function(){

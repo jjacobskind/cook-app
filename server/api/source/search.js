@@ -80,6 +80,13 @@ exports.getTags = function(tagArr, res, search_info){
 	}, 10);
 };
 
+exports.wordProcess = function(text){
+  return text.replace(/[\.,\/#!$%\^&\*;:{}=_`~()0-9]/g,"")
+          .replace(/[\t\n]/g," ")
+          .replace(/\s{2,}/g," ")
+          .toLowerCase()
+          .split(" ");
+};
 
 // Scrapes recipe from source, auto-tags it by F2F ID, and saves entry in DB
 exports.tagRecipe = function(url, tagArr, name, source) {
@@ -96,12 +103,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
       }
       else if(!err && response.statusCode==200){
         var $ = cheerio.load(body);
-        var text = $(selector).text()
-                      .replace(/[\.,\/#!$%\^&\*;:{}=_`~()0-9]/g,"")
-                      .replace(/[\t\n]/g," ")
-                      .replace(/\s{2,}/g," ")
-                      .toLowerCase()
-                      .split(" ");
+        var text = exports.wordProcess($(selector).text());
         var unique_words = _.unique(text);
         var len = unique_words.length;
         var i=0;
