@@ -77,11 +77,11 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
         .then(function(pop_obj) {
           Q.nfcall(async.parallel, pop_obj.functions)
             .then(function(){
-                return res.send(pop_obj.values);
+                all_results = pop_obj.values;
+                all_results_tagged = all_results.length;
             });
         })
     });
-    return false; //Temporary cutoff for testing purposes
 
   // Loads array of domains that are already registered in selector tool
   // These arrays will be used to determine whether a result can be displayed
@@ -91,7 +91,7 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
     // Add two arrays to search_info
     // First array contains the domain url
     // Second array contains a boolean value indicating whether a selector has been picked
-    .then(search.getDomains)
+    .then(exports.getDomains)
 
     // Attach Food2Fork API URL containing search parameters
     .then(function(ret_info){
@@ -105,7 +105,7 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
     .then(function(search_info){
       Q.nfcall(request, search_info.cur_url)
         .then(function(res){
-          search_info.titles = search.searchRecipes(search_info, res[0].body);
+          search_info.titles = exports.searchRecipes(search_info, res[0].body);
           return search_info;
         })
 
@@ -116,7 +116,7 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
         .then(function(search_info){
           Tag.find({}).exec()
             .then(function(tagArr){
-              search.getTags(tagArr, res, search_info);
+              exports.getTags(tagArr, res, search_info);
             });
         })
         .fail(function(err){ console.log(err); });
@@ -179,7 +179,7 @@ exports.getTags = function(tagArr, res, search_info){
 	for(var i=0, len=search_info.titles.length; i<len;i++) {
 		exports.tagRecipe(search_info.titles[i].url, tagArr, search_info.titles[i].name, "f2f");
 	}
-	var total = search_info.titles.length;
+	var total = search_info.titles.length + all_results.length;
 	var tag_waiting = setInterval(function() {
     if(all_results.length>=5){
       clearInterval(tag_waiting);
@@ -207,7 +207,6 @@ exports.tagRecipe = function(url, tagArr, name, source) {
   var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
   Source.findOne({url:domain}, function(err, item) {
     var selector = item.selector;
-
     request(url, function(err, response, body) {
 
       if(err) {

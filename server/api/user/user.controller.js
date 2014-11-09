@@ -99,19 +99,25 @@ exports.me = function(req, res, next) {
 
 // Adds or removes skill tags from the user's account
 exports.changeTags = function(req, res) {
-  var skill = req.body.skill_tag;
+  var skill = req.body.skill;
   var id = req.body.id;
   User.findById(id, function(err, user){
-    if(req.body.add) {
+    var i=user.skills.length;
+    var index=-1;
+    while(i--){
+      if(String(user.skills[i].skill_tag) == String(skill.skill_tag)){
+        index=i;
+      }
+    }
+    if(req.body.add && index===-1) {
       user.skills.push(skill);
       user.save();
-      res.send("finished");
-    } else {
-      var index = user.skills.indexOf(skill);
+    } 
+    else if(index!==-1) {
       user.skills.splice(index,1);
       user.save();
-      res.send("finished");
     }
+    res.send("finished");
   });
 };
 

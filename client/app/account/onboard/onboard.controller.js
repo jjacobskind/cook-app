@@ -17,28 +17,43 @@ angular.module('generatorApp')
 					}
 					return item;
 				});
+				$scope.suggestions=$scope.skill_tags;
 			});
 		});
-		$scope.suggestions=[];
+		$scope.suggestions;
 		$scope.skill_tags;
 		var load_tags;
 
 		$scope.autoComplete = function() {
-			$scope.suggestions=[];
-			if($scope.skill.length>0) {
-				var entry_len = $scope.skill.length;
-				var i = $scope.skill_tags.length;
-				while((i--) && ($scope.suggestions.length<20)) {
-					if($scope.skill_tags[i].display_word.substring(0,entry_len)===$scope.skill){
-						$scope.suggestions.push($scope.skill_tags[i]);
+			if(!$scope.skill){
+				$scope.suggestions= $scope.skill_tags;
+			} else {
+				$scope.suggestions=[];
+				if($scope.skill.length>0) {
+					var entry_len = $scope.skill.length;
+					var i = $scope.skill_tags.length;
+					while((i--) && ($scope.suggestions.length<20)) {
+						if($scope.skill_tags[i].display_word.substring(0,entry_len)===$scope.skill){
+							$scope.suggestions.push($scope.skill_tags[i]);
+						}
 					}
 				}
 			}
 		};
 		$scope.toggleSkill = function(skill_obj) {
-			var index = $scope.selected_skills.indexOf(skill_obj);
 			var skill_id = skill_obj._id;
-			var i=$scope.skill_tags.length;
+			console.log(skill_id);
+
+			var i=$scope.selected_skills.length;
+			var index=-1;
+			while(i--) {
+				if(skill_id===$scope.selected_skills[i]._id) {
+					index=i;
+					break;
+				}
+			}
+
+			i=$scope.skill_tags.length;
 			var tags_index=-1;
 			while(i--) {
 				if(skill_id===$scope.skill_tags[i]._id) {
@@ -47,7 +62,7 @@ angular.module('generatorApp')
 				}
 			}
 			var post_obj = { 
-					skill_tag: {
+					skill: {
 						skill_tag: skill_id,
 						skill_level: 0
 					},
@@ -62,10 +77,7 @@ angular.module('generatorApp')
 				$scope.skill_tags[tags_index].picked=false;
 				post_obj.add=false;
 			}
-
 			$http.post('/api/users/tags', post_obj)
-				.success(function(res){
-					console.log(res);
-				});
+				.success(function(){ console.log("Finished!"); });
 		};
 	});
