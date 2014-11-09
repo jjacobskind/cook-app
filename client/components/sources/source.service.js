@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
   .factory('Source', function ($resource) {
     return $resource('/api/sources/selectors/:id', {
       id: '@_id'

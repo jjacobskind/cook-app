@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
   .controller('LoginCtrl', function ($scope, Auth, $state, $window) {
     $scope.user = {};
     $scope.errors = {};

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
 	.controller('OnboardCtrl', function($scope, $http, User, Tag){
 		$scope.skill="";
 		$scope.user = User.get(function(){

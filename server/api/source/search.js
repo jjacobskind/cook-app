@@ -285,7 +285,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
                   };
                 });
                 async.parallel(parallelTasks, function(){
-                  console.log("Parallel finish!");
+                  console.log("Recipes tagged in skill document");
                 });
               });
             });

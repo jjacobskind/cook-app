@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
 	.controller('RecommendedRecipesCtrl', function($scope, $http, Auth){
 		$scope.awesomeThings = [];
 		$scope.id = Auth.getCurrentUser()._id;

@@ -1,6 +1,20 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
-<h1>{{skill.display_word}}</h1>
-<p><a href='#' ui-sref='edit_skill({type:skill._id})'>Edit Page</a></p>
 
-<div ng-include="'components/recipe-list/recipe-list.html'"></div>
+<div class="row">
+    <div class='col-md-1 col-lg-1'></div>
+    <div class='col-md-11 col-lg-11'>
+		<h1>{{skill.display_word}}</h1>
+		<p><a href='#' ui-sref='edit_skill({type:skill._id})'>Edit Page</a></p>
+    </div>
+</div>
+<div class="row">
+    <div class='col-md-6 col-lg-6'></div>
+    <div class="col-md-5 col-lg-5">
+      
+      <div ng-include="'components/recipe-list/recipe-list.html'"></div>
+
+    </div>
+    <div class='col-md-1 col-lg-1'></div>
+  </div>
+</div>

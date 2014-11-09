@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
 	.factory('ProfileMenu', function(){
 		var menu = [
 			{

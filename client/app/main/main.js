@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
   .config(function ($stateProvider) {
     $stateProvider
       .state('home', {

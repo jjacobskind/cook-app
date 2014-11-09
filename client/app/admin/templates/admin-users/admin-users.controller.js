@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
 	.controller('AdminUserCtrl', function($scope, $http, User){
 		$scope.users = User.query();
 		$scope.toggleHalfDelete = function(obj){

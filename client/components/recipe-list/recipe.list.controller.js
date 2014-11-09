@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
 	.controller('RecipeListCtrl', function($scope){
 		
 	});

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
   .controller('MainCtrl', function ($scope, $http, User) {
     var user = User.get();
     $scope.search_text;

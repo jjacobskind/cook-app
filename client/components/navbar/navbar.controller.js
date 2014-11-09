@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
     $scope.menu = [
       {

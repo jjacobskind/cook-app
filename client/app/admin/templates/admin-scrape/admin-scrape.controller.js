@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
 	.controller('AdminScrapeCtrl', function($scope, $http, Source) {
 		$scope.sources = Source.query();
         $scope.source = {

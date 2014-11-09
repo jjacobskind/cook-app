@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('generatorApp')
+angular.module('cookApp')
 	.controller('AdminTagsCtrl', function($scope, $http, Tag){
 		$scope.tags = Tag.query();
         $scope.tag = {

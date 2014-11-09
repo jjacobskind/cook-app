@@ -3,7 +3,7 @@
 /**
  * Removes server error when user updates input
  */
-angular.module('generatorApp')
+angular.module('cookApp')
   .directive('mongooseError', function () {
     return {
       restrict: 'A',

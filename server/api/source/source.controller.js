@@ -11,7 +11,6 @@ var request = require('request');
 var f2fkey = require('../../config/environment/production').f2fkey;
 var querystring = require('querystring');
 var fs = require('fs');
-var mwdictkey = require('../../config/environment/production').mwdictkey;
 var Snowball = require('snowball');
 var Q = require('q');
 var search = require('./search');
