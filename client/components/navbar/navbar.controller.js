@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('cookApp')
-  .controller('NavbarCtrl', function ($scope, $location, Auth) {
+  .controller('NavbarCtrl', function ($scope, $location, $state, Auth) {
     $scope.menu = [
       {
         'title': 'Profile',
         'state': 'profile'
       }
     ];
-
+    $scope.$state = $state;
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = Auth.isAdmin;

@@ -15,7 +15,8 @@ var all_results_tagged = 0;
 var all_results = [];
 
 exports.startSearch = function(res, search_terms, unique_terms, id, url, recommended) {
-
+  all_results_tagged = 0;
+  all_results = [];
   var search_info ={};
   // Get user's skills
   User.findById(id).exec()
@@ -79,6 +80,7 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
             .then(function(){
                 all_results = pop_obj.values;
                 all_results_tagged = all_results.length;
+                console.log(all_results.length);
             });
         })
     });
@@ -100,26 +102,36 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
       return search_info;
     })
 
+    // Make API request to Food2Fork
     // Add a 'titles' array to search_info
-    // Each array element consists of an object containing the name and URL of a recipe
+      // Each array element consists of an object containing 
+      // the name and full URL of each recipe returned
     .then(function(search_info){
       Q.nfcall(request, search_info.cur_url)
-        .then(function(res){
-          search_info.titles = exports.searchRecipes(search_info, res[0].body);
-          return search_info;
+        .then(function(api_res){
+          Recipe.find({}).exec()
+            .then(function(all_local_recipes){
+              return all_local_recipes.map(function(item){
+                return item.url;
+              });
+            })
+            .then(function(locally_stored_urls){
+              search_info.titles = exports.searchRecipes(search_info, api_res[0].body, locally_stored_urls);
+              return search_info;
+            })
+            // Queries database for all skill tags
+            // Populates base_tags with array of all base words for tags
+            // Populates display_tags with array of all display words for tags
+            // Arrays are populated simultaneously, so indices match
+            .then(function(search_info){
+              Tag.find({}).exec()
+                .then(function(tagArr){
+                  exports.getTags(tagArr, res, search_info);
+                });
+            })
+            .fail(function(err){ console.log(err); });
         })
 
-        // Queries database for all skill tags
-        // Populates base_tags with array of all base words for tags
-        // Populates display_tags with array of all display words for tags
-        // Arrays are populated simultaneously, so indices match
-        .then(function(search_info){
-          Tag.find({}).exec()
-            .then(function(tagArr){
-              exports.getTags(tagArr, res, search_info);
-            });
-        })
-        .fail(function(err){ console.log(err); });
     });
 };
 
@@ -135,30 +147,32 @@ exports.getDomains = function(resultArr) {
     return {urls: stored_urls, pendings: stored_pendings};
 };
 
-exports.searchRecipes = function(search_info, body) {
+exports.searchRecipes = function(search_info, body, locally_stored_urls) {
 	var data = JSON.parse(body);
 	var titles = [];
-	data.recipes.forEach(function(item){
-	  var fixed_url = exports.fixUrl(item.source_url);
-	  var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
-	  var arr_index = search_info.urls.indexOf(domain);
-	  
-	  // If domain is not in selector tool, add it
-	  if(arr_index===-1) {
-	    var new_entry = new Source({
-	      name:domain,
-	      url:domain,
-	      recipe_page:fixed_url,
-	      pending:true
-	    });
-	    new_entry.save();
-	    search_info.urls.push(domain);
-	    search_info.pendings.push(true);
+  data.recipes.forEach(function(item){
+    var fixed_url = exports.fixUrl(item.source_url); 
+    if(locally_stored_urls.indexOf(fixed_url)===-1) {
+  	  var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
+  	  var arr_index = search_info.urls.indexOf(domain);
+  	  
+  	  // If domain is not in selector tool, add it
+  	  if(arr_index===-1) {
+  	    var new_entry = new Source({
+  	      name:domain,
+  	      url:domain,
+  	      recipe_page:fixed_url,
+  	      pending:true
+  	    });
+  	    new_entry.save();
+  	    search_info.urls.push(domain);
+  	    search_info.pendings.push(true);
 
-	    // If domain already has a selector picked, push recipe onto array for tagging/potential display
-	  } else if(!search_info.pendings[arr_index]){
-	    titles.push({'name': item.title, 'url': fixed_url});
-	  }
+  	    // If domain already has a selector picked, push recipe onto array for tagging/potential display
+  	  } else if(!search_info.pendings[arr_index]){
+  	    titles.push({'name': item.title, 'url': fixed_url});
+  	  }
+    }
 	});
 	return titles;
 };
@@ -173,18 +187,17 @@ exports.getTags = function(tagArr, res, search_info){
 		display_tags.push(tagArr[i].display_word);
 	}
 
-	// Resets tracking arrays and calls tagRecipe on each recipe
-	all_results_tagged = 0;
-	all_results = [];
-	for(var i=0, len=search_info.titles.length; i<len;i++) {
-		exports.tagRecipe(search_info.titles[i].url, tagArr, search_info.titles[i].name, "f2f");
-	}
-	var total = search_info.titles.length + all_results.length;
+
+  var total = search_info.titles.length + all_results.length;
+  // Resets tracking arrays and calls tagRecipe on each recipe
+  for(var i=0, len=search_info.titles.length; i<len;i++) {
+    exports.tagRecipe(search_info.titles[i].url, tagArr, search_info.titles[i].name, "f2f");
+  }
 	var tag_waiting = setInterval(function() {
-    if(all_results.length>=5){
-      clearInterval(tag_waiting);
-      res.send(all_results)
-    }
+    // if(all_results.length>=5){
+    //   clearInterval(tag_waiting);
+    //   res.send(all_results)
+    // }
 		if(all_results_tagged === total) {
 		  clearInterval(tag_waiting);
 		  res.send(all_results);
@@ -205,6 +218,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
   
   var fixed_url = exports.fixUrl(url);
   var domain = fixed_url.substring(0, fixed_url.substring(8).indexOf('/')+8);
+
   Source.findOne({url:domain}, function(err, item) {
     var selector = item.selector;
     request(url, function(err, response, body) {
