@@ -10,11 +10,13 @@ var cheerio = require('cheerio');
 var Snowball = require('snowball');
 var async = require('async');
 var Q = require('q');
+var querystring = require('querystring');
+var f2fkey = require('../../config/environment/production').f2fkey;
 
 var all_results_tagged = 0;
 var all_results = [];
 
-exports.startSearch = function(res, search_terms, unique_terms, id, url, recommended) {
+exports.startSearch = function(res, search_terms, unique_terms, id, recommended) {
   all_results_tagged = 0;
   all_results = [];
   var search_info ={};
@@ -80,7 +82,6 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
             .then(function(){
                 all_results = pop_obj.values;
                 all_results_tagged = all_results.length;
-                console.log(all_results.length);
             });
         })
     });
@@ -95,42 +96,62 @@ exports.startSearch = function(res, search_terms, unique_terms, id, url, recomme
     // Second array contains a boolean value indicating whether a selector has been picked
     .then(exports.getDomains)
 
-    // Attach Food2Fork API URL containing search parameters
-    .then(function(ret_info){
-      search_info = ret_info;
-      search_info.cur_url = url;
-      return search_info;
-    })
-
-    // Make API request to Food2Fork
+    // Make 5 API requests to Food2Fork
     // Add a 'titles' array to search_info
       // Each array element consists of an object containing 
       // the name and full URL of each recipe returned
     .then(function(search_info){
-      Q.nfcall(request, search_info.cur_url)
-        .then(function(api_res){
-          Recipe.find({}).exec()
-            .then(function(all_local_recipes){
-              return all_local_recipes.map(function(item){
-                return item.url;
+      var api_calls = [];
+      var urls = [];
+      var search_results = { recipes:[] };
+      var max = 2
+      for(var i=1;i<=max;i++){
+        var url = String('http://food2fork.com/api/search?' + querystring.stringify({
+          'key':f2fkey,
+          'q': search_terms,
+          'page': i
+        }));
+        urls.push(url);
+      }
+
+      api_calls = urls.map(function(item){
+        return (function(cb){
+          request(item, function(err, response, body){
+            var data = JSON.parse(body);
+            search_results.recipes = search_results.recipes.concat(data.recipes);
+            cb();
+          });
+        });
+      });
+
+      Q.nfcall(async.parallel, api_calls)
+      .then(function(){
+        return search_results;
+      })
+
+      .then(function(api_res){
+        Recipe.find({}).exec()
+          .then(function(all_local_recipes){
+            return all_local_recipes.map(function(item){
+              return item.url;
+            });
+          })
+          .then(function(locally_stored_urls){
+            search_info.titles = exports.searchRecipes(search_info, api_res, locally_stored_urls);
+            return search_info;
+          })
+          // Queries database for all skill tags
+          // Populates base_tags with array of all base words for tags
+          // Populates display_tags with array of all display words for tags
+          // Arrays are populated simultaneously, so indices match
+          .then(function(search_info){
+            Tag.find({}).exec()
+              .then(function(tagArr){
+                exports.getTags(tagArr, res, search_info);
               });
-            })
-            .then(function(locally_stored_urls){
-              search_info.titles = exports.searchRecipes(search_info, api_res[0].body, locally_stored_urls);
-              return search_info;
-            })
-            // Queries database for all skill tags
-            // Populates base_tags with array of all base words for tags
-            // Populates display_tags with array of all display words for tags
-            // Arrays are populated simultaneously, so indices match
-            .then(function(search_info){
-              Tag.find({}).exec()
-                .then(function(tagArr){
-                  exports.getTags(tagArr, res, search_info);
-                });
-            })
-            .fail(function(err){ console.log(err); });
-        })
+          })
+          .fail(function(err){ console.log(err); });
+      })
 
     });
 };
@@ -147,8 +168,7 @@ exports.getDomains = function(resultArr) {
     return {urls: stored_urls, pendings: stored_pendings};
 };
 
-exports.searchRecipes = function(search_info, body, locally_stored_urls) {
-	var data = JSON.parse(body);
+exports.searchRecipes = function(search_info, data, locally_stored_urls) {
 	var titles = [];
   data.recipes.forEach(function(item){
     var fixed_url = exports.fixUrl(item.source_url); 

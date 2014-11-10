@@ -139,12 +139,8 @@ exports.getRecipes = function(req, res) {
   var recommended = req.body.recommended;
   var id = req.body.id;
   var unique_terms = _.unique(search.wordProcess(search_terms));
-  var url = 'http://food2fork.com/api/search?' + querystring.stringify({
-    'key':f2fkey,
-    'q': search_terms
-  });
 
-  search.startSearch(res, search_terms, unique_terms, id, url, recommended);
+  search.startSearch(res, search_terms, unique_terms, id, recommended);
 };
 
 // Saves Source data in seed file as backup
