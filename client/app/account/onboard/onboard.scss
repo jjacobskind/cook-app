@@ -6,6 +6,39 @@
 	}
 }
 
+#selected_skills {
+
+	width:80%;
+	margin-left:auto;
+	margin-right:auto;
+
+	ul {
+		list-style:none;
+		padding:0;
+	}
+
+	li {
+		background-color: #ADE1F0;
+		border-radius: 3px;
+		text-align: left;
+		padding: 5px;
+		display: inline-block;
+		margin-left: 1px;
+		margin-bottom: 1px;
+		border-style:solid;
+		border-width:1px;
+		border-color:black;
+
+		a{
+			font-weight:900;
+			color:#7A070D;
+		}
+	}
+}
+hr {
+	width:90%;
+}
+
 #onboard_skills {
 
 
@@ -14,13 +47,14 @@
 		border-radius: 3px;
 		margin:2px;
 		height:80px;
+		min-width:200px;
 
 		.skill_blurb {
 			font-size:0.6em;
 		}
 
 		.skill_name {
-			padding-top:5px;
+			padding-top:0;
 			margin-bottom: 3px;
 		}
 
@@ -33,20 +67,6 @@
 		}
 	}
 
-	#selected_skills_col {
-		margin-left: -100px;
-
-		ul {
-			list-style:none;
-		}
-
-		li {
-			background-color: #ddd;
-			border-radius: 3px;
-			text-align: left;
-			padding: 5px;
-		}
-	}
 }
 
 @import 'onboard.responsive.scss';

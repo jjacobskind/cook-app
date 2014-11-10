@@ -53,19 +53,14 @@
 		<div class="col-md-4 col-lg-4">Selector</div>
 		<div class="col-md-4 col-lg-4"></div>
 	</div>
-	<div class="row" ng-repeat="source in sources | orderBy:['-pending', 'name']" ng-class="{'pending':source.pending}">
+	<div class="row domain_listings" ng-repeat="source in sources | orderBy:['-pending', 'name']" ng-class="{'pending':source.pending}">
 		<div class="cell col-md-4 col-lg-4"><a href='{{source.recipe_page}}' target='_blank'>{{source.name}}</a></div>
 		<div class="cell col-md-4 col-lg-4">
 			<p>{{source.selector}}</p>
 		</div>
-		<div class="cell col-md-2 col-lg-2">
+		<div class="cell col-md-4 col-lg-4">
 			<a href="#" class = 'btn btn-success' ng-click='fillForm(source)'>Test</a>
-		</div>
-		<div class="cell col-md-2 col-lg-2">
 			<a href="#" class='btn btn-danger' ng-click='delete(source._id, source)'>Remove</a>
 		</div>
-	</div>
-	<div class="row" id="footer">
-		<button type="button" class="btn btn-primary" ng-click="makeSeed()">Backup Sources In Seed File</button>
 	</div>
 </div>
