@@ -135,12 +135,13 @@ exports.recommendedSearch = function(req, res){
 
 // Searches Fork2Food's API
 exports.getRecipes = function(req, res) {
+  var socketId = req.body.socketId;
   var search_terms = req.body.search;
   var recommended = req.body.recommended;
   var id = req.body.id;
   var unique_terms = _.unique(search.wordProcess(search_terms));
 
-  search.startSearch(res, search_terms, unique_terms, id, recommended);
+  search.startSearch(res, search_terms, unique_terms, id, socketId, recommended);
 };
 
 // Saves Source data in seed file as backup
@@ -211,6 +212,29 @@ exports.updateOrCreateTag = function(req, res) {
         if(errFindAll) { return handleError(res, errFindAll); }
         return res.json(200, {'array': tagArr});
       });
+    }
+  });
+};
+
+exports.suggestTag = function(req, res){
+  var skill_name = req.body.skill;
+  var stemmer = new Snowball('English');
+  stemmer.setCurrent(skill_name);
+  stemmer.stem();
+  var stemmed_skill = stemmer.getCurrent();
+  Tag.findOne({base_word:stemmed_skill}, function(err, tag){
+    if(err){
+      console.log(err);
+      res.send(err);
+    } 
+    else if(!tag) {
+      // create tag with a 'suggested' key
+      res.send("Thank you for your suggestion!")
+    } 
+    else if (tag.suggested){
+      res.send("Thank you for your suggestion! (add to count)")
+    } else {
+      res.send("'" + tag.display_word + "' is already a tag!");
     }
   });
 };

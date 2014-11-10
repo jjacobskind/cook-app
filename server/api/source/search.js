@@ -12,13 +12,12 @@ var async = require('async');
 var Q = require('q');
 var querystring = require('querystring');
 var f2fkey = require('../../config/environment/production').f2fkey;
+var io;
+var socketId;
 
-var all_results_tagged = 0;
-var all_results = [];
+exports.startSearch = function(res, search_terms, unique_terms, id, socketId_param, recommended) {
+  socketId = socketId_param;
 
-exports.startSearch = function(res, search_terms, unique_terms, id, recommended) {
-  all_results_tagged = 0;
-  all_results = [];
   var search_info ={};
   // Get user's skills
   User.findById(id).exec()
@@ -80,8 +79,7 @@ exports.startSearch = function(res, search_terms, unique_terms, id, recommended)
         .then(function(pop_obj) {
           Q.nfcall(async.parallel, pop_obj.functions)
             .then(function(){
-                all_results = pop_obj.values;
-                all_results_tagged = all_results.length;
+                res.send(pop_obj.values);
             });
         })
     });
@@ -96,7 +94,7 @@ exports.startSearch = function(res, search_terms, unique_terms, id, recommended)
     // Second array contains a boolean value indicating whether a selector has been picked
     .then(exports.getDomains)
 
-    // Make 5 API requests to Food2Fork
+    // Make multiple simultaneous API requests to Food2Fork
     // Add a 'titles' array to search_info
       // Each array element consists of an object containing 
       // the name and full URL of each recipe returned
@@ -208,21 +206,11 @@ exports.getTags = function(tagArr, res, search_info){
 	}
 
 
-  var total = search_info.titles.length + all_results.length;
+  var total = search_info.titles.length;
   // Resets tracking arrays and calls tagRecipe on each recipe
   for(var i=0, len=search_info.titles.length; i<len;i++) {
     exports.tagRecipe(search_info.titles[i].url, tagArr, search_info.titles[i].name, "f2f");
   }
-	var tag_waiting = setInterval(function() {
-    // if(all_results.length>=5){
-    //   clearInterval(tag_waiting);
-    //   res.send(all_results)
-    // }
-		if(all_results_tagged === total) {
-		  clearInterval(tag_waiting);
-		  res.send(all_results);
-		}
-	}, 10);
 };
 
 exports.wordProcess = function(text){
@@ -244,7 +232,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
     request(url, function(err, response, body) {
 
       if(err) {
-        console.log("Scrape Error: " + err);
+        console.log("Scrape Error: " + err +"|");
       }
       else if(!err && response.statusCode==200){
         var $ = cheerio.load(body);
@@ -284,8 +272,6 @@ exports.tagRecipe = function(url, tagArr, name, source) {
           matched_ids.push(tag_ids[base_index]);
         }
       }
-      // var addRecipeToSkill = function(entry) {
-      // };
       if(matched_tags.length>0) {
         Recipe.findOne({'url': url}, function(err, entry){
           if(err) {
@@ -304,7 +290,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
             });
             new_recipe.save(function(err_alpha, saved_item){
               saved_item.populate('tags', function(err_beta, populated_entry){
-                all_results.push(populated_entry);
+                socketResults(populated_entry);
 
                 // Add recipe ID to its matching skill tags
                 var parallelTasks = matched_ids.map(function(item){
@@ -326,13 +312,10 @@ exports.tagRecipe = function(url, tagArr, name, source) {
           } else {
             // TAG IDS GET POPULATED HERE
             entry.populate('tags', function(err, populated_entry){
-              all_results.push(populated_entry);
+              socketResults(populated_entry);
             });
           }
-          all_results_tagged++;
         })
-      } else {
-        all_results_tagged++;
       }
     });
   });
@@ -351,4 +334,14 @@ exports.fixUrl =function(url) {
     fixed_url=url;
   }
   return fixed_url;
+};
+
+exports.initSearchSocket = function(socket){
+  io=socket;
+};
+
+var socketResults = function(recipe){
+  io.sockets.connected[socketId].emit('send:results', {
+    recipe: recipe
+  });
 };

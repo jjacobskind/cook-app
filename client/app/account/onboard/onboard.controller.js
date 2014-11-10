@@ -80,4 +80,16 @@ angular.module('cookApp')
 			$http.post('/api/users/tags', post_obj)
 				.success(function(){ console.log("Finished!"); });
 		};
+
+		$scope.suggestSkill = function(skill_name) {
+			$http.post('api/sources/tags/suggest', {'skill':skill_name})
+				.success(function(res){
+					console.log(res);
+				});
+				// .fail(function(err){
+				// 	console.log(err);
+				// })
+			$scope.skill="";
+			$scope.suggestions= $scope.skill_tags;
+		};
 	});

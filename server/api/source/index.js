@@ -26,6 +26,7 @@ router.post('/get_recipes', controller.getRecipes);
 router.get('/tags', controller.getTags);
 router.get('/tags/:id', controller.show);
 router.post('/tags', controller.updateOrCreateTag);
+router.post('/tags/suggest', auth.hasRole('user'), controller.suggestTag);
 router.delete('/tags/:id', controller.destroyTag);
 
 module.exports = router;

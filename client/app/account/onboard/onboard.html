@@ -34,7 +34,7 @@
 			</div>
 		</div>
 		<div ng-switch-when='false'>
-			<p>Sorry, '{{skill}}' is not currently a tag. Please <a href="#">click here</a> if you would like us to add this tag.</p>
+			<p>Sorry, '{{skill}}' is not currently a tag. Please <a href="#" ng-click='suggestSkill(skill)'>click here</a> if you would like us to add this tag.</p>
 		</div>
 	</div>
 </div>
