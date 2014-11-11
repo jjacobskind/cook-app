@@ -226,6 +226,18 @@ exports.updateOrCreateTag = function(req, res) {
   });
 };
 
+exports.editSkillPage = function(req, res){
+  Tag.findById(req.body.id, function(err, tag){
+    if(!err && !!tag){
+      tag.page.blurb = req.body.blurb;
+      tag.page.overview = req.body.overview;
+      tag.page.tips = req.body.tips;
+      tag.save();
+      res.json(tag);
+    }
+  });
+};
+
 exports.suggestTag = function(req, res){
   var skill_name = req.body.skill;
   var stemmer = new Snowball('English');

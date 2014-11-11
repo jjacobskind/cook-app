@@ -31,7 +31,16 @@
 		<label>Quick Tips</label>
     </div>
     <div class='col-md-9 col-lg-9 edit_right_col'>
-		<input type='text' ng-model='skill_edit_ctrl.tips' />
-		<button class='btn btn-primary btn-xs'>Add Tip</button>
-	</div>
+		<input type='text' ng-model='skill_edit_ctrl.new_tip' />
+		<button class='btn btn-primary btn-xs' ng-click='skill_edit_ctrl.addTip()'>Add Tip</button>
+        <br><br>
+        <ul>
+            <li ng-repeat='tip in skill_edit_ctrl.tips'>
+                <span>{{tip}}</span><a ng-click='skill_edit_ctrl.removeTip(tip)'>X</a>
+            </li>
+        </ul>
+        <div class='row'>
+            <button type='submit' class='btn btn-success' ng-click='skill_edit_ctrl.saveChanges()'>Save Changes</button>
+        </div>
+    </div>
 </div>

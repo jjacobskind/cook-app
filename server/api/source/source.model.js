@@ -25,7 +25,12 @@ var TagSchema = new Schema({
 					}
 				},
 	recipes: [{type: mongoose.Schema.ObjectId, ref: 'Recipe'}],
-	category: String
+	category: String,
+	page: {
+		blurb: String,
+		overview: String,
+		tips: []
+	}
 });
 
 var RecipeSchema = new Schema({
