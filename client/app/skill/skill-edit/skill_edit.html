@@ -3,7 +3,35 @@
 <div class="row">
     <div class='col-md-1 col-lg-1'></div>
     <div class='col-md-11 col-lg-11'>
-		<h1>Edit {{skill.display_word}} Page</h1>
-		<p><a href='#' ui-sref='skill({type:skill._id})'>View Page</a></p>
+		<h1>Edit {{skill_edit_ctrl.skill.display_word}} Page</h1>
+		<p><a href='#' ui-sref='skill({type:skill_edit_ctrl.skill._id})'>View Page</a></p>
     </div>
+</div>
+<div class="row">
+    <div class='col-md-1 col-lg-1'></div>
+    <div class='col-md-2 col-lg-2 edit_left_col'>
+		<label>Quick Description</label>
+    </div>
+    <div class='col-md-9 col-lg-9 edit_right_col'>
+		<input type='text' ng-model='skill_edit_ctrl.blurb' />
+	</div>
+</div>
+<div class="row" id="edit_skill_overview">
+    <div class='col-md-1 col-lg-1'></div>
+    <div class='col-md-2 col-lg-2 edit_left_col'>
+		<label>Skill Overview</label>
+    </div>
+    <div class='col-md-9 col-lg-9 edit_right_col'>
+		<textarea id='skill_overview_text' ng-model='skill_edit_ctrl.overview'></textarea>
+	</div>
+</div>
+<div class="row" id="edit_quick_tips">
+    <div class='col-md-1 col-lg-1'></div>
+    <div class='col-md-2 col-lg-2 edit_left_col'>
+		<label>Quick Tips</label>
+    </div>
+    <div class='col-md-9 col-lg-9 edit_right_col'>
+		<input type='text' ng-model='skill_edit_ctrl.tips' />
+		<button class='btn btn-primary btn-xs'>Add Tip</button>
+	</div>
 </div>

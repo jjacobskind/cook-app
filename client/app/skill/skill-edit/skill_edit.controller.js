@@ -1,9 +1,17 @@
 'use strict';
 
 angular.module('cookApp')
-	.controller('SkillEditCtrl', function($scope, $stateParams, Tag) {
+	.controller('SkillEditCtrl', function($scope, $stateParams, $state, skillTagFactory) {
 		var type = $stateParams.type;
-		$scope.skill = Tag.get({id:type}, function(){
-			$scope.skill.display_word = $scope.skill.display_word[0].toUpperCase() + $scope.skill.display_word.substring(1);
-		});
+		var self = this;
+		this.skill;
+		if(!!skillTagFactory.getSkill()){
+			this.skill=skillTagFactory.getSkill();
+		} else if(!!type) {
+			skillTagFactory.setSkill(type, function(skill){
+				self.skill = skill;
+			});
+		} else {
+			$state.go('profile');
+		}
 	});

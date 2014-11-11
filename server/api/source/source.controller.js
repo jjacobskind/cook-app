@@ -37,6 +37,12 @@ exports.show = function(req, res) {
   Tag.findById(req.params.id, function (err, tag) {
     if(err) { return handleError(res, err); }
     if(!tag) { return res.send(404); }
+
+    // Only want to return 10 recipes
+    // Otherwise size of skill tag JSON slows down routing function too much
+    if(tag.recipes.length>10){
+      tag.recipes = tag.recipes.slice(0,10);
+    }
     tag.populate('recipes', function(err1, populatedTag){
       var recipesArr = populatedTag.recipes.map(function(item){
         return function(cb){
