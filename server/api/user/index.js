@@ -13,6 +13,6 @@ router.get('/me', auth.isAuthenticated(), controller.me);
 router.put('/:id/password', auth.isAuthenticated(), controller.changePassword);
 router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', controller.create);
-router.post('/tags', controller.changeTags);
+router.post('/tags', auth.isAuthenticated(), controller.changeTags);
 
 module.exports = router;

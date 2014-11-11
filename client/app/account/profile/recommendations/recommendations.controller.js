@@ -1,14 +1,36 @@
 'use strict';
 
 angular.module('cookApp')
-	.controller('RecommendedRecipesCtrl', function($scope, $http, Auth){
-		$scope.awesomeThings = [];
+	.controller('RecommendedRecipesCtrl', function($scope, $http, $timeout, Auth, socket){
+		var recipes = [];
+		$scope.listIndex=1;
+		$scope.recipeList = [];
 		$scope.id = Auth.getCurrentUser()._id;
 		$scope.getRecipes = function() {
 		  $http.get('/api/sources/get_recipes/' + $scope.id, {search: $scope.search_text})
 		    .success(function(recipe_list) {
-		      $scope.awesomeThings = recipe_list;
+		    	recipes = recipes.concat(recipe_list);
+		    	if(recipes.length>=10){
+			    	$scope.recipeList = recipes.slice(0, 10);
+		    	} else {
+			    	$timeout(function(){
+			    	  if(recipes.length<10){
+			    	    $scope.recipeList=recipes;
+			    	  }
+			    	}, 2000);
+			    }
+		    })
+		    .error(function(res){
+		    	console.log(res);
 		    });
 		};
+
+		socket.on('send:results', function (response) {
+		  recipes.push(response.recipe);
+		  $scope.recipeCount=recipes.length;
+		  if(recipes.length>=10 && $scope.listIndex===1){
+		    $scope.recipeList = recipes.slice(0,10);
+		  }
+		});
 		$scope.getRecipes();
 	});

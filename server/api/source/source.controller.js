@@ -128,8 +128,12 @@ exports.recommendedSearch = function(req, res){
     var terms = user.search_terms;
     var range = Math.min(5, user.search_terms.length)-1;
     var entry = Math.floor(Math.random()*range);
-    var obj = {body: { search: user.search_terms[entry].term, id: user._id, recommended: true } };
-    exports.getRecipes(obj, res);
+    if(!!user.search_terms && !!user.search_terms.length){
+      var obj = {body: { search: user.search_terms[entry].term, id: user._id, recommended: true } };
+      exports.getRecipes(obj, res);
+    } else {
+      res.send("he");
+    }
   });
 };
 

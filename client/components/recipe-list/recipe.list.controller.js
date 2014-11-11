@@ -1,6 +1,6 @@
-'use strict';
+// 'use strict';
 
-angular.module('cookApp')
-	.controller('RecipeListCtrl', function($scope){
+// angular.module('cookApp')
+// 	.controller('RecipeListCtrl', function($scope){
 		
-	});
+// 	});

@@ -23,6 +23,6 @@ angular.module('cookApp')
 		return menu;
 	})
 	.controller('ProfileCtrl', function($scope, User, ProfileMenu) {
-		$scope.user = User.get();
-		$scope.menu = ProfileMenu;
+		this.user = User.get();
+		this.menu = ProfileMenu;
 	});

@@ -3,9 +3,9 @@
 angular.module('cookApp')
 	.controller('SkillCtrl', function($scope, $stateParams, Tag) {
 		var type = $stateParams.type;
-		$scope.awesomeThings;
-		$scope.skill = Tag.get({id:type}, function(){
-			$scope.skill.display_word = $scope.skill.display_word[0].toUpperCase() + $scope.skill.display_word.substring(1);
-			$scope.awesomeThings = $scope.skill.recipes;
+		var self = this;
+		this.skill = Tag.get({id:type}, function(){
+			self.skill.display_word = self.skill.display_word[0].toUpperCase() + self.skill.display_word.substring(1);
+			self.recipeList = self.skill.recipes;
 		});
 	});

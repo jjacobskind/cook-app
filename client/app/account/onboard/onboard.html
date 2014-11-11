@@ -10,7 +10,7 @@
 		<h3>Selected Skills</h3>
 		<ul>
 			<li ng-repeat='skill in selected_skills | orderBy: "display_word"'>
-				<span class='selected_item'>{{skill.display_word}} </span><a href="#" ng-click='toggleSkill(skill)'>X</a>
+				<span class='selected_item'>{{skill.display_word}} </span><a ng-click='toggleSkill(skill)' class='remove_skill'>X</a>
 			</li>
 		</ul>
 	</div>
@@ -23,8 +23,8 @@
 			<div class='cell col-sm-2 col-md-2 col-lg-2' ng-repeat='suggestion in suggestions | orderBy: "display_word"'>
 				<div class='row'>
 					<div class='btn-col col-sm-6 col-md-6 col-lg-6' ng-switch='!!suggestion.picked'>
-						<a ng-switch-when='false' href='#' ng-click='toggleSkill(suggestion)' class='btn btn-sm btn-primary'>Add</a>
-						<a ng-switch-when='true' href='#' ng-click='toggleSkill(suggestion)' class='btn btn-sm btn-danger'>Remove</a>
+						<a ng-switch-when='false' ng-click='toggleSkill(suggestion)' class='btn btn-sm btn-primary'>Add</a>
+						<a ng-switch-when='true' ng-click='toggleSkill(suggestion)' class='btn btn-sm btn-danger'>Remove</a>
 					</div>
 					<p class='skill_name'>{{suggestion.display_word}}</p>
 				</div>

@@ -6,6 +6,6 @@ angular.module('cookApp')
       .state('home', {
         url:'/',
         templateUrl:'app/main/main.html',
-        controller: 'MainCtrl'
+        controller: 'MainCtrl as main'
       });
   });

@@ -102,7 +102,7 @@ exports.startSearch = function(res, search_terms, unique_terms, id, socketId_par
       var api_calls = [];
       var urls = [];
       var search_results = { recipes:[] };
-      var max = 2
+      var max = 2;
       for(var i=1;i<=max;i++){
         var url = String('http://food2fork.com/api/search?' + querystring.stringify({
           'key':f2fkey,

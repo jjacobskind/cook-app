@@ -40,9 +40,9 @@ angular.module('cookApp')
 				}
 			}
 		};
+		
 		$scope.toggleSkill = function(skill_obj) {
 			var skill_id = skill_obj._id;
-			console.log(skill_id);
 
 			var i=$scope.selected_skills.length;
 			var index=-1;
@@ -82,14 +82,12 @@ angular.module('cookApp')
 		};
 
 		$scope.suggestSkill = function(skill_name) {
-			$http.post('api/sources/tags/suggest', {'skill':skill_name})
+			$http.post('/api/sources/tags/suggest', {'skill':skill_name})
 				.success(function(res){
 					console.log(res);
 				});
-				// .fail(function(err){
-				// 	console.log(err);
-				// })
+
 			$scope.skill="";
-			$scope.suggestions= $scope.skill_tags;
+			$scope.suggestions = $scope.skill_tags;
 		};
 	});

@@ -117,7 +117,7 @@ exports.changeTags = function(req, res) {
       user.skills.splice(index,1);
       user.save();
     }
-    res.send("finished");
+    res.json({message: "finished"});
   });
 };
 

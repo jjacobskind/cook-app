@@ -27,7 +27,7 @@ angular.module('cookApp')
       .state('profile', {
         url: '/profile',
         templateUrl: 'app/account/profile/profile.html',
-        controller: 'ProfileCtrl'
+        controller: 'ProfileCtrl as profile'
       })
       .state('profile.favorite', {
         url: '/profile/favorites',

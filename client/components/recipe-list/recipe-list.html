@@ -1,12 +1,17 @@
 <div class='col-md-12 col-lg-12 recipe-list-font-set'>
-	<ul class="nav nav-tabs nav-stacked col-md-12 col-lg-12 col-sm-12" ng-repeat="thing in awesomeThings">
-		<li>
-			<a href="{{thing.url}}" target="_blank" tooltip="{{thing.info}}">{{thing.name}}</a>
+	<ul class="nav col-md-12 col-lg-12 col-sm-12">
+		<li class="nav nav-tabs nav-stacked" ng-repeat="recipe in recipeList">
+			<a href="{{recipe.url}}" target="_blank">{{recipe.name}}</a>
 			<p class="tags">
-				<span ng-repeat="tag in thing.tags | orderBy: 'display_word'">
+				<span ng-repeat="tag in recipe.tags | orderBy: 'display_word'">
 					<a href="#" ui-sref='skill({type: tag._id})' >{{tag.display_word}}</a>{{$last ? '':', '}}
 				</span>
 			</p>
 		</li>
 	</ul>
+	<div id="results_nav">
+		<a href="#" ng-show="listIndex>1" ng-click="traverseResults('prev')">Previous Results</a>
+		<span ng-show="recipeCount>listIndex*10 && listIndex>1"> | </span>
+		<a href="#" ng-show="recipeCount>listIndex*10" ng-click="traverseResults('next')">Next Results</a>
+	</div>
 </div>

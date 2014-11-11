@@ -31,7 +31,7 @@ var io = require('socket.io').listen(server);
 // Socket.io Communication
 // var client = redis.createClient();
 io.sockets.on('connection', function(socket){
-
+	console.log("connected");
 	search.initSearchSocket(io);
 	socket.emit('send:socketId', {
 		id: socket.id
