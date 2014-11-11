@@ -1,7 +1,7 @@
 <div class='col-md-12 col-lg-12 recipe-list-font-set'>
 	<ul class="nav col-md-12 col-lg-12 col-sm-12">
 		<li class="nav nav-tabs nav-stacked" ng-repeat="recipe in recipeList">
-			<a href="{{recipe.url}}" target="_blank">{{recipe.name}}</a>
+			<a ui-sref='recipe({type:recipe._id})'>{{recipe.name}}</a>
 			<p class="tags">
 				<span ng-repeat="tag in recipe.tags | orderBy: 'display_word'">
 					<a href="#" ui-sref='skill({type: tag._id})' >{{tag.display_word}}</a>{{$last ? '':', '}}

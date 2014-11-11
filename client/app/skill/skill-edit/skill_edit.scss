@@ -1,11 +1,21 @@
 .edit_left_col {
 	text-align:right;
+	font-size:1.2em;
 }
 
 .edit_right_col {
 	text-align:left;
+	font-size:1.2em;
 }
 
+.char_count {
+	font-size: 0.8em;
+	font-style: italic;
+}
+
+#blurb_input {
+	width:600px;
+}
 
 textarea {
 	resize: none;
@@ -13,11 +23,16 @@ textarea {
 	height: 160px;
 }
 
+#new_tip_text {
+	height: 80px;
+}
+
 #edit_skill_overview {
 	padding-top:20px;
 }
 
 #edit_quick_tips {
+	
 
 	input {
 		width:600px;

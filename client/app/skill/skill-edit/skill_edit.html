@@ -13,7 +13,8 @@
 		<label>Quick Description</label>
     </div>
     <div class='col-md-9 col-lg-9 edit_right_col'>
-		<input type='text' ng-model='skill_edit_ctrl.blurb' />
+		<input id="blurb_input" type='text' maxlength='60' ng-model='skill_edit_ctrl.blurb' />
+        <p class='char_count'>Characters remaining: {{60-skill_edit_ctrl.blurb.length}}</p>
 	</div>
 </div>
 <div class="row" id="edit_skill_overview">
@@ -22,7 +23,8 @@
 		<label>Skill Overview</label>
     </div>
     <div class='col-md-9 col-lg-9 edit_right_col'>
-		<textarea id='skill_overview_text' ng-model='skill_edit_ctrl.overview'></textarea>
+		<textarea id='skill_overview_text' maxlength='1500' ng-model='skill_edit_ctrl.overview'></textarea>
+        <p class='char_count'>Characters remaining: {{1500-skill_edit_ctrl.overview.length}}</p>
 	</div>
 </div>
 <div class="row" id="edit_quick_tips">
@@ -31,12 +33,18 @@
 		<label>Quick Tips</label>
     </div>
     <div class='col-md-9 col-lg-9 edit_right_col'>
-		<input type='text' ng-model='skill_edit_ctrl.new_tip' />
-		<button class='btn btn-primary btn-xs' ng-click='skill_edit_ctrl.addTip()'>Add Tip</button>
+        <textarea id='new_tip_text' maxlength='160' ng-model='skill_edit_ctrl.new_tip'></textarea>
+        <p class='char_count'>Characters remaining: {{160-skill_edit_ctrl.new_tip.length}}</p>
+		<button class='btn btn-primary btn-sm' ng-click='skill_edit_ctrl.addTip()'>Add Tip</button>
         <br><br>
         <ul>
             <li ng-repeat='tip in skill_edit_ctrl.tips'>
-                <span>{{tip}}</span><a ng-click='skill_edit_ctrl.removeTip(tip)'>X</a>
+                <div class='row'>
+                    <div class='col-md-11 col-lg-11'>{{tip}}</div>
+                    <div class='col-md-1 col-lg-1'>
+                        <a ng-click='skill_edit_ctrl.removeTip(tip)'>X</a>
+                    </div>
+                </div>
             </li>
         </ul>
         <div class='row'>

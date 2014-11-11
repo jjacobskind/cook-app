@@ -45,4 +45,26 @@ angular.module('cookApp')
         }
       }
     });
-  });
+  })
+  .factory('Recipe', function ($resource) {
+    return $resource('/api/sources/recipes/:id', {
+      id: '@_id'
+    },
+    {
+      get: {
+        method: 'GET',
+        params: {
+          id:'@_id'
+        }
+      },
+      save: {
+        method: 'POST'
+      }, 
+      delete: {
+        method: 'DELETE',
+        params: {
+          id: '@_id'
+        }
+      }
+    });
+  })

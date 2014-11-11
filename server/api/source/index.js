@@ -17,11 +17,10 @@ router.get('/selectors', controller.getSelectors);
 router.post('/selectors', auth.hasRole('admin'), controller.updateOrCreateSelector);
 router.delete('/selectors/:id', controller.destroy);
 
-router.get('/seed', auth.hasRole('admin'), controller.makeSeed);
-
 // Recipe functions
-router.get('/get_recipes/:id', auth.isAuthenticated(), controller.recommendedSearch);
+router.get('/recipes/:id', auth.isAuthenticated(), controller.getOneRecipe);
 router.post('/get_recipes', controller.getRecipes);
+router.post('/get_recipes/recommended', auth.isAuthenticated(), controller.recommendedSearch);
 
 router.get('/tags', controller.getTags);
 router.get('/tags/:id', controller.show);

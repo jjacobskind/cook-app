@@ -103,6 +103,13 @@ exports.updateOrCreateSelector = function(req, res) {
   })
 };
 
+// Sends a single recipe to client
+exports.getOneRecipe = function(req, res){
+  Recipe.findById(req.params.id, function(err, recipe){
+    res.json(recipe);
+  })
+};
+
 // Deletes a source from the DB.
 exports.destroy = function(req, res) {
   Source.findById(req.params.id, function (err, source) {
@@ -130,12 +137,12 @@ exports.test = function(req, res) {
 
 // Initiates a recommended search
 exports.recommendedSearch = function(req, res){
-  User.findById(req.params.id, function(err, user){
+  User.findById(req.body.id, function(err, user){
     var terms = user.search_terms;
     var range = Math.min(5, user.search_terms.length)-1;
     var entry = Math.floor(Math.random()*range);
     if(!!user.search_terms && !!user.search_terms.length){
-      var obj = {body: { search: user.search_terms[entry].term, id: user._id, recommended: true } };
+      var obj = {body: { search: user.search_terms[entry].term, id: user._id, recommended: true, socketId: req.body.socketId } };
       exports.getRecipes(obj, res);
     } else {
       res.send("he");

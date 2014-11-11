@@ -236,7 +236,8 @@ exports.tagRecipe = function(url, tagArr, name, source) {
       }
       else if(!err && response.statusCode==200){
         var $ = cheerio.load(body);
-        var text = exports.wordProcess($(selector).text());
+        var original_text = $(selector).text();
+        var text = exports.wordProcess(original_text);
         var unique_words = _.unique(text);
         var len = unique_words.length;
         var i=0;
@@ -281,7 +282,7 @@ exports.tagRecipe = function(url, tagArr, name, source) {
             var d = new Date();
             var new_recipe = new Recipe({
                 'name': name,
-                'recipe_text': text.join(" "),
+                'recipe_text': original_text.trim(),
                 'stemmed_words': recipe_text,
                 'source': source,
                 'url': url,

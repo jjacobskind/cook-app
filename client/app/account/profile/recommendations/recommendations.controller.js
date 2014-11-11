@@ -7,7 +7,7 @@ angular.module('cookApp')
 		$scope.recipeList = [];
 		$scope.id = Auth.getCurrentUser()._id;
 		$scope.getRecipes = function() {
-		  $http.get('/api/sources/get_recipes/' + $scope.id, {search: $scope.search_text})
+		  $http.post('/api/sources/get_recipes/recommended', {id: $scope.id, socketId: socket.getId()})
 		    .success(function(recipe_list) {
 		    	recipes = recipes.concat(recipe_list);
 		    	if(recipes.length>=10){
