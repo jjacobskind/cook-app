@@ -19,9 +19,19 @@ angular.module('cookApp')
 	.controller('SkillCtrl', function($scope, $stateParams, $state, skillTagFactory) {
 		var type = $stateParams.type;
 		var self = this;
+		this.blurb="";
+		this.overview="";
+		this.new_tip="";
+		this.tips=[];
+		this.skill;
 		if(!!type){
 			skillTagFactory.setSkill(type, function(returned_skill){
 				self.skill=returned_skill;
+				self.blurb = returned_skill.page.blurb;
+				self.overview = returned_skill.page.overview;
+				if(!!returned_skill.page.tips) {
+					self.tips = returned_skill.page.tips;
+				}
 				$scope.recipeList = returned_skill.recipes;
 			});
 		} else {

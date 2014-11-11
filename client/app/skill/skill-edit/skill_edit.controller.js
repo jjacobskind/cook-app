@@ -10,10 +10,21 @@ angular.module('cookApp')
 		this.tips=[];
 		this.skill;
 		if(!!skillTagFactory.getSkill()){
-			this.skill=skillTagFactory.getSkill();
+			var skill=skillTagFactory.getSkill();
+			self.skill = skill;
+			self.blurb = skill.page.blurb;
+			self.overview = skill.page.overview;
+			if(!!skill.page.tips) {
+				self.tips = skill.page.tips;
+			}
 		} else if(!!type) {
 			skillTagFactory.setSkill(type, function(skill){
 				self.skill = skill;
+				self.blurb = skill.page.blurb;
+				self.overview = skill.page.overview;
+				if(!!skill.page.tips) {
+					self.tips = skill.page.tips;
+				}
 			});
 		} else {
 			$state.go('profile');

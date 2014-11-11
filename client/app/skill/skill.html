@@ -9,9 +9,18 @@
     </div>
 </div>
 <div class="row">
-    <div class='col-md-6 col-lg-6'></div>
+    <div class='col-md-6 col-lg-6' id='skill_info_col'>
+        <h3>Skill Blurb</h3>
+        <p>{{skill_ctrl.skill.page.blurb}}</p>
+        <h3>Overview</h3>
+        <p>{{skill_ctrl.skill.page.overview}}</p>
+        <h3>Quick Tips</h3>
+        <ul>
+          <li ng-repeat='tip in skill_ctrl.skill.page.tips'>{{tip}}</li>
+        </ul>
+      </div>
     <div class="col-md-5 col-lg-5">
-      
+      <h3>Recipes</h3>
       <div ng-include="'components/recipe-list/recipe-list.html'"></div>
 
     </div>
