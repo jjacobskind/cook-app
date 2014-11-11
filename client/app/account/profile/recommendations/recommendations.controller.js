@@ -6,7 +6,7 @@ angular.module('cookApp')
 		$scope.listIndex=1;
 		$scope.recipeList = [];
 		$scope.id = Auth.getCurrentUser()._id;
-		$scope.getRecipes = function() {
+		 var getRecipes = function() {
 		  $http.post('/api/sources/get_recipes/recommended', {id: $scope.id, socketId: socket.getId()})
 		    .success(function(recipe_list) {
 		    	recipes = recipes.concat(recipe_list);
@@ -32,5 +32,5 @@ angular.module('cookApp')
 		    $scope.recipeList = recipes.slice(0,10);
 		  }
 		});
-		$scope.getRecipes();
+		getRecipes();
 	});

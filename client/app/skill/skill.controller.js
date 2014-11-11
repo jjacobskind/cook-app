@@ -24,6 +24,7 @@ angular.module('cookApp')
 		this.new_tip="";
 		this.tips=[];
 		this.skill;
+		$scope.recipeList=[];
 		if(!!type){
 			skillTagFactory.setSkill(type, function(returned_skill){
 				self.skill=returned_skill;
@@ -32,6 +33,7 @@ angular.module('cookApp')
 				if(!!returned_skill.page.tips) {
 					self.tips = returned_skill.page.tips;
 				}
+				console.log(returned_skill);
 				$scope.recipeList = returned_skill.recipes;
 			});
 		} else {

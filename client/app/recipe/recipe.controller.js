@@ -20,8 +20,14 @@ angular.module('cookApp')
 		var type = $stateParams.type;
 		this.recipe;
 		var self = this;
+		this.selected_skill;
 		recipeFactory.setRecipe(type, function(returned_recipe){
 			self.recipe=returned_recipe;
-			console.log(returned_recipe);
 		});
+
+		this.showSkill = function(skill_obj){
+			skill_obj.display_word = skill_obj.display_word[0].toUpperCase() + skill_obj.display_word.substring(1);
+			self.selected_skill=skill_obj;
+			
+		};
 	});

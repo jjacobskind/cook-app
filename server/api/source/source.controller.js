@@ -43,6 +43,7 @@ exports.show = function(req, res) {
     if(tag.recipes.length>10){
       tag.recipes = tag.recipes.slice(0,10);
     }
+
     tag.populate('recipes', function(err1, populatedTag){
       var recipesArr = populatedTag.recipes.map(function(item){
         return function(cb){
@@ -106,7 +107,11 @@ exports.updateOrCreateSelector = function(req, res) {
 // Sends a single recipe to client
 exports.getOneRecipe = function(req, res){
   Recipe.findById(req.params.id, function(err, recipe){
-    res.json(recipe);
+    recipe.populate('tags', function(err, pop_recipe){
+      if(!err){
+        res.json(pop_recipe);
+      }
+    });
   })
 };
 

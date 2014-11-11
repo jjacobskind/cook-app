@@ -1,7 +1,39 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
-<h1>Recipe</h1>
-
-{{recipe_ctrl.recipe.recipe_text}}
-<br><br><br>
-<a href="{{recipe_ctrl.recipe.url}}" target="_blank">Recipe Source</a>
+<div class='table' id='recipe_view_table'>
+	<div class='row'>
+		<div class='col-md-2 col-lg-2'></div>
+		<div class='col-md-4 col-lg-4'>
+			<h1>{{recipe_ctrl.recipe.name}}</h1>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-md-2 col-lg-2'></div>
+		<div class='col-md-4 col-lg-4 left-col'>
+			<h3>Recipe</h3>
+			<br>
+			{{recipe_ctrl.recipe.recipe_text}}
+			<br><br>
+			<h4>Skills Required For This Recipe:</h4>
+			<ul id="recipe_skill_box">
+				<li ng-repeat='skill in recipe_ctrl.recipe.tags | orderBy: "display_word"' ng-click='recipe_ctrl.showSkill(skill)'>{{skill.display_word}}</li>
+			</ul>
+			<br>
+			<a href="{{recipe_ctrl.recipe.url}}" target="_blank">Recipe Source</a>
+		</div>
+		<div class='col-md-1 col-lg-1'></div>
+		<div class='col-md-3 col-lg-3' ng-show='recipe_ctrl.selected_skill!==undefined'>
+			<h3>{{recipe_ctrl.selected_skill.display_word}}</h3>
+			<br>
+			<h4>Quick Tips</h4>
+			<ul>
+				<li ng-repeat='tip in recipe_ctrl.selected_skill.page.tips'>
+					{{tip}}
+				</li>
+			</ul>
+			<br>
+			<h4>General Information About {{recipe_ctrl.selected_skill.display_word}}</h4>
+			<p id="skill_overview">{{recipe_ctrl.selected_skill.page.overview}}</p>
+		</div>
+	</div>
+</div>
