@@ -32,9 +32,6 @@ angular.module('cookApp')
       }
     };
   })
-  // .factory(User){
-  //   var user = User.get();
-  // }
   .controller('MainCtrl', function ($scope, $http, $timeout, User, socket) {
     var user = User.get();
     $scope.search_text;

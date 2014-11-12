@@ -12,6 +12,7 @@ var async = require('async');
 var Q = require('q');
 var querystring = require('querystring');
 var f2fkey = require('../../config/environment/production').f2fkey;
+var Entities = require('html-entities').AllHtmlEntities;
 var io;
 var socketId;
 
@@ -280,6 +281,18 @@ exports.tagRecipe = function(url, tagArr, name, source) {
           }
           else if(!entry) {
             var d = new Date();
+            var entities = new Entities();
+            name = entities.decode(name)
+                    .split(" ")
+                    .map(function(item) {
+                      item = item.toLowerCase();
+                      if(item==='and' || item==='by'){
+                        return item;
+                      } else {
+                        return item[0].toUpperCase() + item.substring(1);
+                      }
+                    })
+                    .join(" ");
             var new_recipe = new Recipe({
                 'name': name,
                 'recipe_text': original_text.trim(),
