@@ -23,16 +23,17 @@
 		</div>
 		<div class='col-md-1 col-lg-1'></div>
 		<div class='col-md-3 col-lg-3' ng-show='recipe_ctrl.selected_skill!==undefined'>
-			<h3>{{recipe_ctrl.selected_skill.display_word}}</h3>
+			<h3>{{recipe_ctrl.skill_capitalized_display_word}}</h3>
 			<br>
-			<h4>Quick Tips</h4>
+			<p id='empty_skill_message' ng-show='!recipe_ctrl.selected_skill.page.tips.length && !recipe_ctrl.selected_skill.page.overview'>There is not currently any information available about {{recipe_ctrl.selected_skill.display_word}}.</p>
+			<h4 ng-show='!!recipe_ctrl.selected_skill.page.tips.length'>Quick Tips</h4>
 			<ul>
 				<li ng-repeat='tip in recipe_ctrl.selected_skill.page.tips'>
 					{{tip}}
 				</li>
 			</ul>
 			<br>
-			<h4>General Information About {{recipe_ctrl.selected_skill.display_word}}</h4>
+			<h4 ng-show='!!recipe_ctrl.selected_skill.page.overview'>General Information About {{recipe_ctrl.skill_capitalized_display_word}}</h4>
 			<p id="skill_overview">{{recipe_ctrl.selected_skill.page.overview}}</p>
 		</div>
 	</div>

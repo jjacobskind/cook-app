@@ -3,6 +3,7 @@
 angular.module('cookApp')
 	.factory('recipeFactory', function(Recipe){
 		var recipe;
+		this.skill_capitalized_display_word;
 		var self = this;
 		return {
 			setRecipe: function(id, cb){
@@ -26,7 +27,7 @@ angular.module('cookApp')
 		});
 
 		this.showSkill = function(skill_obj){
-			skill_obj.display_word = skill_obj.display_word[0].toUpperCase() + skill_obj.display_word.substring(1);
+			self.skill_capitalized_display_word = skill_obj.display_word[0].toUpperCase() + skill_obj.display_word.substring(1);
 			self.selected_skill=skill_obj;
 			
 		};

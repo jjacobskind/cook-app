@@ -10,11 +10,11 @@
 </div>
 <div class="row">
     <div class='col-md-6 col-lg-6' id='skill_info_col'>
-        <h3>Skill Blurb</h3>
+        <h3 ng-show='!!skill_ctrl.skill.page.blurb'>Skill Blurb</h3>
         <p>{{skill_ctrl.skill.page.blurb}}</p>
-        <h3>Overview</h3>
+        <h3 ng-show='!!skill_ctrl.skill.page.overview'>Overview</h3>
         <p>{{skill_ctrl.skill.page.overview}}</p>
-        <h3>Quick Tips</h3>
+        <h3 ng-show='!!skill_ctrl.skill.page.tips.length'>Quick Tips</h3>
         <ul>
           <li ng-repeat='tip in skill_ctrl.skill.page.tips'>{{tip}}</li>
         </ul>

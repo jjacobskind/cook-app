@@ -14,10 +14,6 @@ angular.module('cookApp')
 			{
 				'title': 'Recent Meals',
 				'state': 'Recent'
-			},
-			{
-				'title': 'Contacts',
-				'state': 'contacts'
 			}
 		];
 		return menu;

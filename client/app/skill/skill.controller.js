@@ -33,7 +33,6 @@ angular.module('cookApp')
 				if(!!returned_skill.page.tips) {
 					self.tips = returned_skill.page.tips;
 				}
-				console.log(returned_skill);
 				$scope.recipeList = returned_skill.recipes;
 			});
 		} else {
