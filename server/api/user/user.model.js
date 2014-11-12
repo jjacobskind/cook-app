@@ -31,7 +31,8 @@ var UserSchema = new Schema({
                   term: String,
                   count: Number
                 }
-              ]
+              ],
+  favorite_recipes: [{type: mongoose.Schema.ObjectId, ref: 'Recipe'}]
 });
 
 /**

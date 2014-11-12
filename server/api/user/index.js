@@ -15,4 +15,6 @@ router.get('/:id', auth.isAuthenticated(), controller.show);
 router.post('/', controller.create);
 router.post('/tags', auth.isAuthenticated(), controller.changeTags);
 
+router.post('/favorites', auth.isAuthenticated(), controller.changeFavorites);
+
 module.exports = router;

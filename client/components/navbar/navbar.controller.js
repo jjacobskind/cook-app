@@ -31,7 +31,25 @@ angular.module('cookApp')
       }
     };
   })
-  .controller('NavbarCtrl', function ($scope, $location, $state, Auth, socket) {
+  .factory('userFactory', function($http, User){
+    var user = User.get();
+    return {
+      getUser: function() {
+        return user;
+      },
+      setUser: function(user_obj) {
+        user = user_obj;
+      }//,
+      // getFaveRecipes: function(){
+      //   $http.post('/api/recipes/populate_recipes', {recipes: user.favorite_recipes})
+      //     .success(function(res){
+      //       console.log(res);
+      //     });
+      // }
+    }
+    
+  })
+  .controller('NavbarCtrl', function ($scope, $location, $state, Auth, socket, userFactory) {
     $scope.menu = [
       {
         'title': 'Profile',

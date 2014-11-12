@@ -17,18 +17,47 @@ angular.module('cookApp')
 			}
 		};
 	})
-	.controller('recipeCtrl', function($stateParams, recipeFactory) {
-		var type = $stateParams.type;
-		this.recipe;
+	.controller('recipeCtrl', function($stateParams, $http, recipeFactory, userFactory) {
 		var self = this;
-		this.selected_skill;
+		var type = $stateParams.type;
+		this.favorited;
+		this.recipe;
+		this.user;
 		recipeFactory.setRecipe(type, function(returned_recipe){
 			self.recipe=returned_recipe;
+			self.user = userFactory.getUser();
+			if(!!self.user.favorite_recipes && self.user.favorite_recipes.indexOf(self.recipe._id)!==-1){
+				self.favorited=true;
+			} else {
+				self.favorited=false;
+			}
 		});
 
 		this.showSkill = function(skill_obj){
 			self.skill_capitalized_display_word = skill_obj.display_word[0].toUpperCase() + skill_obj.display_word.substring(1);
 			self.selected_skill=skill_obj;
 			
+		};
+
+		this.toggleFavorite = function(){
+			if(!!self.user.favorite_recipes && self.user.favorite_recipes.indexOf(self.recipe._id)!==-1){
+				var add=false;
+			} else {
+				add=true;
+			}
+			var obj = {
+				add: add,
+				recipe_id: self.recipe._id
+			};
+			$http.post('/api/users/favorites', obj)
+				.success(function(user_obj){
+					userFactory.setUser(user_obj);
+					self.user = user_obj;
+					if(user_obj.favorite_recipes.indexOf(self.recipe._id)!==-1){
+						self.favorited=true;
+					} else {
+						self.favorited=false;
+					}
+				});
 		};
 	});

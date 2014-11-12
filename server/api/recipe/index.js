@@ -13,5 +13,6 @@ router.patch('/:id', controller.update);
 router.delete('/:id', controller.destroy);
 
 // router.post('/tag_recipe', controller.tagRecipe);
+// router.post('/populate_recipes', controller.populateArray);
 
 module.exports = router;

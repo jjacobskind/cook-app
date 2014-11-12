@@ -2,6 +2,7 @@
 
 var _ = require('lodash');
 var Recipe = require('../source/source.model').recipe;
+var User = require('../user/user.model').user;
 var Word = require('../source/source.model').word;
 var Source = require('../source/source.model').source;
 var request = require('request');

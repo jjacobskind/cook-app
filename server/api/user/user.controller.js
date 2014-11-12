@@ -93,7 +93,7 @@ exports.me = function(req, res, next) {
     if (!user) return res.json(401);
     user.populateSkills(function(err,pop_user) {
       res.json(pop_user);
-    })
+    });
   });
 };
 
@@ -120,6 +120,24 @@ exports.changeTags = function(req, res) {
     res.json({message: "finished"});
   });
 };
+
+
+exports.changeFavorites = function(req, res){
+  var user_id = req.user._id;
+  var recipe_id = req.body.recipe_id;
+  User.findById(user_id, function(err, user){
+    var user_favorite_index = user.favorite_recipes.indexOf(recipe_id);
+    if(req.body.add && user_favorite_index===-1){
+      user.favorite_recipes.push(recipe_id);
+      user.save();
+    }
+    else if(!req.body.add && user_favorite_index!==-1){
+      user.favorite_recipes.splice(user_favorite_index, 1);
+      user.save();
+    }
+    res.json(user);
+  });
+},
 
 /**
  * Authentication callback
