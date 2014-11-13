@@ -2,9 +2,8 @@
 
 angular.module('cookApp')
 	.controller('RecommendedRecipesCtrl', function($scope, $http, $timeout, Auth, socket){
-		var recipes = [];
-		$scope.listIndex=1;
-		$scope.recipeList = [];
+		var self = this;
+		
 		$scope.id = Auth.getCurrentUser()._id;
 		 var getRecipes = function() {
 		  $http.post('/api/sources/get_recipes/recommended', {id: $scope.id, socketId: socket.getId()})

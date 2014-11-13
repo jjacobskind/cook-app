@@ -1,6 +1,6 @@
-<div class='col-md-12 col-lg-12 recipe-list-font-set'>
+<div class='col-md-12 col-lg-12 recipe-list-font-set' ng-controller='RecipelistCtrl as list_ctrl'>
 	<ul class="nav col-md-12 col-lg-12 col-sm-12">
-		<li class="nav nav-tabs nav-stacked" ng-repeat="recipe in recipeList">
+		<li class="nav nav-tabs nav-stacked" ng-repeat="recipe in list_ctrl.visibleRecipes">
 			<a ui-sref='recipe({type:recipe._id})'>{{recipe.name}}</a>
 			<p class="tags">
 				<span ng-repeat="tag in recipe.tags | orderBy: 'display_word'">
@@ -10,8 +10,8 @@
 		</li>
 	</ul>
 	<div id="results_nav">
-		<a href="#" ng-show="listIndex>1" ng-click="traverseResults('prev')">Previous Results</a>
-		<span ng-show="recipeCount>listIndex*10 && listIndex>1"> | </span>
-		<a href="#" ng-show="recipeCount>listIndex*10" ng-click="traverseResults('next')">Next Results</a>
+		<a href="#" ng-show="list_ctrl.listIndex>1" ng-click="list_ctrl.traverseResults('prev')">Previous Results</a>
+		<span ng-show="list_ctrl.recipeCount>list_ctrl.listIndex*10 && list_ctrl.listIndex>1"> | </span>
+		<a href="#" ng-show="list_ctrl.recipeCount>list_ctrl.listIndex*10" ng-click="list_ctrl.traverseResults('next')">Next Results</a>
 	</div>
 </div>
